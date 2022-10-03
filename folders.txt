@@ -1,0 +1,11 @@
+folder-root1
+ folder1
+ folder2
+   main.go functii.go header.go
+   blabla.go
+  subfolder3
+  subfolder4
+   subfolder5     
+ folder6
+folder-root2
+folder-root3
