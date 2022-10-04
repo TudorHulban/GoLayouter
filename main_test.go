@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -16,6 +17,7 @@ func TestFile(t *testing.T) {
 
 	for _, file := range entries {
 		err := checkIfExist(file)
+		log.Print(file)
 		assert.Equal(t, err, nil, "No match for file", file)
 	}
 

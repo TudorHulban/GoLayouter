@@ -1,6 +1,8 @@
 package main
 
 import (
+	"io/ioutil"
+	"log"
 	"os"
 )
 
@@ -38,4 +40,11 @@ func checkIfExist(path string) error {
 
 func changeDirectory(path string) {
 	os.Chdir(path)
+}
+
+func writeInFile(message, fileName string) {
+	err := ioutil.WriteFile(fileName, []byte(message), 0644)
+	if err != nil {
+		log.Panic(err)
+	}
 }

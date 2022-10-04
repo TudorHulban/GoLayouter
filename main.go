@@ -35,16 +35,16 @@ func isTestFile(isPackage, line string) string {
 	return line
 }
 
-func lineParser(line, separator string) []string {
+func lineParser(line, packageName string) []string {
 	var res []string
 
-	files := strings.Split(line, separator)
+	files := strings.Split(line, " ")
 
 	for _, file := range files {
 		fileTrimmed := strings.TrimLeft(file, " ")
 
 		if fileTrimmed != "" {
-			res = append(res, isTestFile(separator, fileTrimmed))
+			res = append(res, isTestFile(packageName, fileTrimmed), fileTrimmed)
 		}
 	}
 
@@ -82,18 +82,18 @@ func parse(entries []*entry) []string {
 	var stackPackages stack
 
 	for ix, entry := range entries {
-		// if typeofFile(entry.folderInfo) == "path" {
-		// 	stackFolders = nil
-		// 	stackIndents = nil
-		// 	stackPackages = nil
+		if typeofFile(entry.folderInfo) == "path" {
+			stackFolders = nil
+			stackIndents = nil
+			stackPackages = nil
 
-		// 	res = append(res, getPackage(entry.folderInfo))
+			res = append(res, getPackage(entry.folderInfo))
 
-		// 	stackIndents.push(getPackage(entry.folderInfo))
-		// 	changeDirectory(getPackage(entry.folderInfo))
+			stackIndents.push(getPackage(entry.folderInfo))
+			changeDirectory(getPackage(entry.folderInfo))
 
-		// 	continue
-		// }
+			continue
+		}
 
 		if typeofFile(entry.folderInfo) == "pack" {
 			stackPackages.push(getPackage(entry.folderInfo))
@@ -109,11 +109,11 @@ func parse(entries []*entry) []string {
 				line := stackFolders.String() + "/" + file
 				res = append(res, line)
 
-				// if pack != "t" {
-				// 	res = append(res, "echo \""+pack.(string)+"\" > "+stackFolders.String()+"/"+file)
-				// }
 				createFile(line)
-
+				
+				if pack != "t" {
+					writeInFile(pack.(string), line)
+				}
 			}
 
 			continue
@@ -175,5 +175,5 @@ func parse(entries []*entry) []string {
 }
 
 func main() {
-
+	writeInFile("Hello", "folders.txt")
 }
