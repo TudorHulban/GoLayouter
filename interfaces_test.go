@@ -14,7 +14,7 @@ func TestWriteToDisk(t *testing.T) {
 	entries := parse(convertToEntries(content))
 
 	for _, file := range entries {
-		err := checkIfExist(file)
+		err := checkIfFileExists(file)
 		writeInFile(file, _pathOutput)
 		assert.Equal(t, err, nil, "No match for file", file)
 	}

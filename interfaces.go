@@ -2,9 +2,9 @@ package main
 
 type IWritter interface {
 	writeToDisk() error
-	writeToFile() error
 }
 
+// TODO: move to another file
 func writeToFile(input, output string) error {
 	content, errRe := readFile(input)
 	if errRe != nil {

@@ -1,82 +1,30 @@
 package main
 
-import (
-	"strings"
-)
-
-const _filePath = "folders.txt"
-
-func typeofFile(fileName string) string {
-	if strings.Contains(fileName, "!") {
-		return "path"
-	}
-
-	if strings.Contains(fileName, ".") {
-		return "file"
-	}
-
-	if strings.Contains(fileName, "#") {
-		return "pack"
-	}
-
-	return "folder"
+type entry struct {
+	folderInfo string
+	indent     int
 }
 
-func isTestFile(isPackage, line string) string {
-	if isPackage == "t" {
-		return line[:len(line)-3] + "_test.go"
-	}
+type entries []*entry
 
-	return line
-}
-
-func lineParser(line, packageName string) []string {
-	var res []string
-
-	files := strings.Split(line, " ")
-
-	for _, file := range files {
-		fileTrimmed := strings.TrimLeft(file, " ")
-
-		if fileTrimmed != "" {
-			res = append(res, isTestFile(packageName, fileTrimmed), fileTrimmed)
-		}
-	}
-
-	return res
-}
-
-func getPackage(line string) string {
-	return line[2:]
-}
-
-func convertToEntry(line string) *entry {
-	trimmed := strings.TrimLeft(line, " ")
-
-	return &entry{
-		folderInfo: trimmed,
-		indent:     len(line) - len(trimmed),
-	}
-}
-
-func convertToEntries(content []string) []*entry {
-	var res []*entry
+func NewEntries(content []string) *entries {
+	var res entries
 
 	for _, line := range content {
 		res = append(res, convertToEntry(line))
 	}
 
-	return res
+	return &res
 }
 
-func parse(entries []*entry) []string {
+func (e *entries) parse() []string {
 	var res []string
 
 	var stackFolders stack
 	var stackIndents stack
 	var stackPackages stack
 
-	for ix, entry := range entries {
+	for ix, entry := range *e {
 		if typeofFile(entry.folderInfo) == "path" {
 			stackFolders = nil
 			stackIndents = nil
@@ -165,12 +113,5 @@ func parse(entries []*entry) []string {
 		res = append(res, stackFolders.String())
 		//createFolder(stackFolders.String())
 	}
-
 	return res
-}
-
-const _pathInput = "test_cases/folder_c1"
-const _pathOutput = "test_cases/folder_c1_results"
-
-func main() {
 }
