@@ -2,26 +2,10 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
-
-func TestFile(t *testing.T) {
-	content, errRe := readFile(_filePath)
-	require.NoError(t, errRe)
-
-	entries := parse(convertToEntries(content))
-
-	for _, file := range entries {
-		err := checkIfExist(file)
-		log.Print(file)
-		assert.Equal(t, err, nil, "No match for file", file)
-	}
-
-}
 
 func TestTypeofFile(t *testing.T) {
 	got := []string{"! .", "# package main", "file.go", "folder"}

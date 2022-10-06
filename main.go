@@ -109,10 +109,10 @@ func parse(entries []*entry) []string {
 				line := stackFolders.String() + "/" + file
 				res = append(res, line)
 
-				createFile(line)
-				
+				//createFile(line)
+
 				if pack != "t" {
-					writeInFile(pack.(string), line)
+					//	writeInFile(pack.(string), line)
 				}
 			}
 
@@ -124,7 +124,7 @@ func parse(entries []*entry) []string {
 			stackIndents.push(0)
 
 			res = append(res, stackFolders.String())
-			createFolder(stackFolders.String())
+			//createFolder(stackFolders.String())
 
 			continue
 		}
@@ -135,7 +135,7 @@ func parse(entries []*entry) []string {
 			stackPackages.push("")
 
 			res = append(res, stackFolders.String())
-			createFolder(stackFolders.String())
+			//createFolder(stackFolders.String())
 
 			continue
 		}
@@ -147,7 +147,7 @@ func parse(entries []*entry) []string {
 			stackPackages.push("")
 
 			res = append(res, stackFolders.String())
-			createFolder(stackFolders.String())
+			//createFolder(stackFolders.String())
 
 			continue
 		}
@@ -168,12 +168,14 @@ func parse(entries []*entry) []string {
 		stackIndents.push(entry.indent)
 
 		res = append(res, stackFolders.String())
-		createFolder(stackFolders.String())
+		//createFolder(stackFolders.String())
 	}
 
 	return res
 }
 
+const _pathInput = "test_cases/folder_c1"
+const _pathOutput = "test_cases/folder_c1_results"
+
 func main() {
-	writeInFile("Hello", "folders.txt")
 }

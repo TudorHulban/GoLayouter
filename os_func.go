@@ -1,7 +1,8 @@
 package main
 
 import (
-	"io/ioutil"
+	"bufio"
+	"fmt"
 	"log"
 	"os"
 )
@@ -42,9 +43,47 @@ func changeDirectory(path string) {
 	os.Chdir(path)
 }
 
+func clearFile(fileName string) {
+	f, err := os.OpenFile(fileName, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if err := f.Close(); err != nil {
+		log.Fatal(err)
+	}
+}
+
 func writeInFile(message, fileName string) {
-	err := ioutil.WriteFile(fileName, []byte(message), 0644)
+	f, err := os.OpenFile(fileName, os.O_APPEND|os.O_WRONLY, 0644)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	_, err = fmt.Fprintln(f, message)
+	if err != nil {
+		fmt.Println(err)
+	}
+}
+
+func readByLine(fileName string) []string {
+	var res []string
+
+	file, err := os.Open(fileName)
 	if err != nil {
 		log.Panic(err)
 	}
+
+	fileScanner := bufio.NewScanner(file)
+	fileScanner.Split(bufio.ScanLines)
+
+	for fileScanner.Scan() {
+		res = append(res, fileScanner.Text())
+	}
+
+	if err = file.Close(); err != nil {
+		log.Panic(err)
+	}
+
+	return res
 }
