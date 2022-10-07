@@ -10,6 +10,8 @@ type entry struct {
 }
 
 const _filePath = "folders.txt"
+const _pathInput = "test_cases/folder_c1"
+const _pathOutput = "test_cases/folder_c1_results"
 
 func typeofFile(fileName string) string {
 	if strings.Contains(fileName, "!") {
@@ -27,17 +29,20 @@ func typeofFile(fileName string) string {
 	return "folder"
 }
 
-func isTestFile(isPackage, line string) string {
-	if isPackage == "t" {
+func isTestFile(packageName, line string) string {
+	if packageName == "t" {
 		return line[:len(line)-3] + "_test.go"
 	}
 
 	return line
 }
 
+func getPackage(line string) string {
+	return line[2:]
+}
+
 func lineParser(line, packageName string) []string {
 	var res []string
-
 	files := strings.Split(line, " ")
 
 	for _, file := range files {
@@ -49,10 +54,6 @@ func lineParser(line, packageName string) []string {
 	}
 
 	return res
-}
-
-func getPackage(line string) string {
-	return line[2:]
 }
 
 func convertToEntry(line string) *entry {
@@ -88,9 +89,7 @@ func parse(entries []*entry) []string {
 			stackPackages = nil
 
 			res = append(res, getPackage(entry.folderInfo))
-
 			stackIndents.push(getPackage(entry.folderInfo))
-			changeDirectory(getPackage(entry.folderInfo))
 
 			continue
 		}
@@ -108,8 +107,6 @@ func parse(entries []*entry) []string {
 			for _, file := range files {
 				line := stackFolders.String() + "/" + file
 				res = append(res, line)
-
-				//createFile(line)
 
 				if pack != "t" {
 					//	writeInFile(pack.(string), line)
@@ -173,9 +170,6 @@ func parse(entries []*entry) []string {
 
 	return res
 }
-
-const _pathInput = "test_cases/folder_c1"
-const _pathOutput = "test_cases/folder_c1_results"
 
 func main() {
 }

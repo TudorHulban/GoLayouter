@@ -19,15 +19,15 @@ func (s *stack) peek() any {
 	return (*s)[len(*s)-1]
 }
 
-func (s *stack) pop() (any, error) {
+func (s *stack) pop() any {
 	if len(*s) == 0 {
-		return "", errors.New("stack is empty")
+		return errors.New("stack is empty")
 	}
 
 	res := (*s)[len(*s)-1]
-	(*s) = (*s)[:len(*s)-1]
+	*s = (*s)[:len(*s)-1]
 
-	return res, nil
+	return res
 }
 
 func (s stack) String() string {

@@ -1,15 +1,10 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"log"
 	"os"
 )
-
-type osFunc func(path string) error
-
-var actions = make(map[string]osFunc)
 
 func createFolder(path string) error {
 	err := os.Mkdir(path, os.ModePerm)
@@ -39,9 +34,9 @@ func checkIfExist(path string) error {
 	return nil
 }
 
-func changeDirectory(path string) {
-	os.Chdir(path)
-}
+//func changeDirectory(path string) {
+//	os.Chdir(path)
+//}
 
 func clearFile(fileName string) {
 	f, err := os.OpenFile(fileName, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
@@ -53,7 +48,7 @@ func clearFile(fileName string) {
 	}
 }
 
-func writeInFile(message, fileName string) {
+func writeLineInFile(message, fileName string) {
 	f, err := os.OpenFile(fileName, os.O_APPEND|os.O_WRONLY, 0644)
 	if err != nil {
 		fmt.Println(err)
@@ -66,24 +61,17 @@ func writeInFile(message, fileName string) {
 	}
 }
 
-func readByLine(fileName string) []string {
-	var res []string
-
-	file, err := os.Open(fileName)
-	if err != nil {
-		log.Panic(err)
+func writeToFile(input, output string) error {
+	content, errRe := readFile(input)
+	if errRe != nil {
+		return errRe
 	}
 
-	fileScanner := bufio.NewScanner(file)
-	fileScanner.Split(bufio.ScanLines)
+	entries := parse(convertToEntries(content))
 
-	for fileScanner.Scan() {
-		res = append(res, fileScanner.Text())
+	for _, file := range entries {
+		writeLineInFile(file, output)
 	}
 
-	if err = file.Close(); err != nil {
-		log.Panic(err)
-	}
-
-	return res
+	return nil
 }
