@@ -4,7 +4,7 @@ import (
 	"strings"
 )
 
-const _filePath = "folders.txt"
+const _filePath = "fo1lders.txt"
 const _pathInput = "test_cases/folder_c1"
 const _pathOutput = "test_cases/folder_c1_results"
 
@@ -51,120 +51,6 @@ func lineParser(line, packageName string) []string {
 	return res
 }
 
-func convertToEntry(line string) *entry {
-	trimmed := strings.TrimLeft(line, " ")
-
-	return &entry{
-		folderInfo: trimmed,
-		indent:     len(line) - len(trimmed),
-	}
-}
-
-func convertToEntries(content []string) []*entry {
-	var res []*entry
-
-	for _, line := range content {
-		res = append(res, convertToEntry(line))
-	}
-
-	return res
-}
-
-func parse(entries []*entry) []string {
-	var res []string
-
-	var stackFolders stack
-	var stackIndents stack
-	var stackPackages stack
-
-	for ix, entry := range entries {
-		if typeofFile(entry.folderInfo) == "path" {
-			stackFolders = nil
-			stackIndents = nil
-			stackPackages = nil
-
-			res = append(res, getPackage(entry.folderInfo))
-			stackIndents.push(getPackage(entry.folderInfo))
-
-			continue
-		}
-
-		if typeofFile(entry.folderInfo) == "pack" {
-			stackPackages.push(getPackage(entry.folderInfo))
-
-			continue
-		}
-
-		if typeofFile(entry.folderInfo) == "file" {
-			pack := stackPackages.peek()
-			files := lineParser(entry.folderInfo, pack.(string))
-
-			for _, file := range files {
-				line := stackFolders.String() + "/" + file
-				res = append(res, line)
-
-				if pack != "t" {
-					//	writeInFile(pack.(string), line)
-				}
-			}
-
-			continue
-		}
-
-		if ix == 0 {
-			stackFolders.push(entry.folderInfo)
-			stackIndents.push(0)
-
-			res = append(res, stackFolders.String())
-			//createFolder(stackFolders.String())
-
-			continue
-		}
-
-		if entry.indent > stackIndents.peek().(int) {
-			stackFolders.push(entry.folderInfo)
-			stackIndents.push(entry.indent)
-			stackPackages.push("")
-
-			res = append(res, stackFolders.String())
-			//createFolder(stackFolders.String())
-
-			continue
-		}
-
-		if entry.indent == stackIndents.peek().(int) {
-			stackFolders.pop()
-			stackFolders.push(entry.folderInfo)
-			stackIndents.push(entry.indent)
-			stackPackages.push("")
-
-			res = append(res, stackFolders.String())
-			//createFolder(stackFolders.String())
-
-			continue
-		}
-
-		for entry.indent < stackIndents.peek().(int) && len(stackIndents) > 1 {
-			if entry.indent == stackIndents.peek().(int) {
-				stackFolders.pop()
-				stackPackages.pop()
-
-				break
-			}
-
-			stackFolders.pop()
-			stackIndents.pop()
-		}
-
-		stackFolders.push(entry.folderInfo)
-		stackIndents.push(entry.indent)
-
-		res = append(res, stackFolders.String())
-		//createFolder(stackFolders.String())
-	}
-
-	return res
-}
 
 func main() {
 }

@@ -17,6 +17,16 @@ func NewEntries(content []string) *entries {
 	return &res
 }
 
+func convertToEntry(line string) *entry {
+	trimmed := strings.TrimLeft(line, " ")
+
+	return &entry{
+		folderInfo: trimmed,
+		indent:     len(line) - len(trimmed),
+	}
+}
+
+
 func (e *entries) parse() []string {
 	var res []string
 
