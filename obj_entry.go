@@ -1,5 +1,9 @@
 package main
 
+import (
+	"strings"
+)
+
 type entry struct {
 	folderInfo string
 	indent     int
@@ -25,7 +29,6 @@ func convertToEntry(line string) *entry {
 		indent:     len(line) - len(trimmed),
 	}
 }
-
 
 func (e *entries) parse() []string {
 	var res []string

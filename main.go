@@ -4,7 +4,7 @@ import (
 	"strings"
 )
 
-const _filePath = "fo1lders.txt"
+const _filePath = "folders.txt"
 const _pathInput = "test_cases/folder_c1"
 const _pathOutput = "test_cases/folder_c1_results"
 
