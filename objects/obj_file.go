@@ -1,4 +1,4 @@
-package main
+package objects
 
 type file struct {
 	path    string

@@ -36,7 +36,7 @@ func getPackage(line string) string {
 	return line[2:]
 }
 
-func lineParser(line, packageName string) []string {
+func convertToFiles(text, packageName string) []string {
 	var res []string
 	files := strings.Split(line, " ")
 
@@ -50,7 +50,6 @@ func lineParser(line, packageName string) []string {
 
 	return res
 }
-
 
 func main() {
 }

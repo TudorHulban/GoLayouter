@@ -1,4 +1,4 @@
-package main
+package helpers
 
 import (
 	"fmt"
@@ -16,3 +16,5 @@ func TestReadFile(t *testing.T) {
 
 	fmt.Println(strings.Join(content, "\n"))
 }
+
+// TODO: add struct name "add"
