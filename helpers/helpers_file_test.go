@@ -9,7 +9,7 @@ import (
 )
 
 func TestReadFile(t *testing.T) {
-	content, errRe := readFile(_filePath)
+	content, errRe := ReadFile(_filePath)
 	require.NoError(t, errRe)
 
 	// TODO: add test

@@ -5,13 +5,13 @@ import (
 	"strings"
 )
 
-type stack []any
+type Stack []any
 
-func (s *stack) push(item any) {
+func (s *Stack) Push(item any) {
 	*s = append(*s, item)
 }
 
-func (s *stack) peek() any {
+func (s *Stack) Peek() any {
 	if len(*s) == 0 {
 		return nil
 	}
@@ -19,7 +19,7 @@ func (s *stack) peek() any {
 	return (*s)[len(*s)-1]
 }
 
-func (s *stack) pop() any {
+func (s *Stack) Pop() any {
 	if len(*s) == 0 {
 		return errors.New("stack is empty")
 	}
@@ -30,7 +30,7 @@ func (s *stack) pop() any {
 	return res
 }
 
-func (s stack) String() string {
+func (s Stack) String() string {
 	var res []string
 
 	for _, item := range s {

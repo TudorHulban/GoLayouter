@@ -7,10 +7,10 @@ import (
 )
 
 func TestStack(t *testing.T) {
-	var stackFolders stack
+	var stackFolders Stack
 
-	stackFolders.push("folder1")
-	stackFolders.push("subfolder")
+	stackFolders.Push("folder1")
+	stackFolders.Push("subfolder")
 
 	require.Equal(t, "folder1/subfolder", stackFolders.String())
 }

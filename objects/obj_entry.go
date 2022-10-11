@@ -2,6 +2,9 @@ package objects
 
 import (
 	"strings"
+
+	"github.com/TudorHulban/GoLayouter/helpers"
+	s "github.com/TudorHulban/GoLayouter/stack"
 )
 
 type entry struct {
@@ -9,10 +12,10 @@ type entry struct {
 	indent     int
 }
 
-type entries []*entry
+type Entries []*entry
 
-func NewEntries(content []string) *entries {
-	var res entries
+func NewEntries(content []string) *Entries {
+	var res Entries
 
 	for _, line := range content {
 		res = append(res, convertToEntry(line))
@@ -30,36 +33,36 @@ func convertToEntry(line string) *entry {
 	}
 }
 
-func (e *entries) parse() []string {
+func (e *Entries) Parse(*Entries) []string {
 	var res []string
 
-	var stackFolders stack
-	var stackIndents stack
-	var stackPackages stack
+	var stackFolders s.Stack
+	var stackIndents s.Stack
+	var stackPackages s.Stack
 
 	for ix, entry := range *e {
-		if typeofFile(entry.folderInfo) == "path" {
+		if helpers.TypeofFile(entry.folderInfo) == "path" {
 			stackFolders = nil
 			stackIndents = nil
 			stackPackages = nil
 
-			res = append(res, getPackage(entry.folderInfo))
+			res = append(res, helpers.GetPackage(entry.folderInfo))
 
-			stackIndents.push(getPackage(entry.folderInfo))
-			changeDirectory(getPackage(entry.folderInfo))
-
-			continue
-		}
-
-		if typeofFile(entry.folderInfo) == "pack" {
-			stackPackages.push(getPackage(entry.folderInfo))
+			stackIndents.Push(helpers.GetPackage(entry.folderInfo))
+			helpers.ChangeDirectory(helpers.GetPackage(entry.folderInfo))
 
 			continue
 		}
 
-		if typeofFile(entry.folderInfo) == "file" {
-			pack := stackPackages.peek()
-			files := lineParser(entry.folderInfo, pack.(string))
+		if helpers.TypeofFile(entry.folderInfo) == "pack" {
+			stackPackages.Push(helpers.GetPackage(entry.folderInfo))
+
+			continue
+		}
+
+		if helpers.TypeofFile(entry.folderInfo) == "file" {
+			pack := stackPackages.Peek()
+			files := helpers.ConvertToFiles(entry.folderInfo, pack.(string))
 
 			for _, file := range files {
 				line := stackFolders.String() + "/" + file
@@ -76,8 +79,8 @@ func (e *entries) parse() []string {
 		}
 
 		if ix == 0 {
-			stackFolders.push(entry.folderInfo)
-			stackIndents.push(0)
+			stackFolders.Push(entry.folderInfo)
+			stackIndents.Push(0)
 
 			res = append(res, stackFolders.String())
 			//createFolder(stackFolders.String())
@@ -85,10 +88,10 @@ func (e *entries) parse() []string {
 			continue
 		}
 
-		if entry.indent > stackIndents.peek().(int) {
-			stackFolders.push(entry.folderInfo)
-			stackIndents.push(entry.indent)
-			stackPackages.push("")
+		if entry.indent > stackIndents.Peek().(int) {
+			stackFolders.Push(entry.folderInfo)
+			stackIndents.Push(entry.indent)
+			stackPackages.Push("")
 
 			res = append(res, stackFolders.String())
 			//createFolder(stackFolders.String())
@@ -96,11 +99,11 @@ func (e *entries) parse() []string {
 			continue
 		}
 
-		if entry.indent == stackIndents.peek().(int) {
-			stackFolders.pop()
-			stackFolders.push(entry.folderInfo)
-			stackIndents.push(entry.indent)
-			stackPackages.push("")
+		if entry.indent == stackIndents.Peek().(int) {
+			stackFolders.Pop()
+			stackFolders.Push(entry.folderInfo)
+			stackIndents.Push(entry.indent)
+			stackPackages.Push("")
 
 			res = append(res, stackFolders.String())
 			//createFolder(stackFolders.String())
@@ -108,20 +111,20 @@ func (e *entries) parse() []string {
 			continue
 		}
 
-		for entry.indent < stackIndents.peek().(int) && len(stackIndents) > 1 {
-			if entry.indent == stackIndents.peek().(int) {
-				stackFolders.pop()
-				stackPackages.pop()
+		for entry.indent < stackIndents.Peek().(int) && len(stackIndents) > 1 {
+			if entry.indent == stackIndents.Peek().(int) {
+				stackFolders.Pop()
+				stackPackages.Pop()
 
 				break
 			}
 
-			stackFolders.pop()
-			stackIndents.pop()
+			stackFolders.Pop()
+			stackIndents.Pop()
 		}
 
-		stackFolders.push(entry.folderInfo)
-		stackIndents.push(entry.indent)
+		stackFolders.Push(entry.folderInfo)
+		stackIndents.Push(entry.indent)
 
 		res = append(res, stackFolders.String())
 		//createFolder(stackFolders.String())

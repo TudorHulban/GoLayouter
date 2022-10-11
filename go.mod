@@ -1,4 +1,4 @@
-module test
+module github.com/TudorHulban/GoLayouter
 
 go 1.19
 
