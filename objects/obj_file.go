@@ -1,6 +1,9 @@
 package objects
 
 import (
+	"os"
+	"strings"
+
 	"github.com/TudorHulban/GoLayouter/helpers"
 )
 
@@ -10,22 +13,92 @@ type file struct {
 }
 
 func (f file) writeToDisk() error {
-	return helpers.CreateFile(f.path)
+	return CreateFile(f.path)
 }
 
-func convertToFile(line, packageName string) *file {
-	var f file
+func getPackage(line string) string {
+	return line[2:]
+}
 
-	f.path = helpers.IsTestFile(packageName, line)
-
-	if packageName == "" {
-		f.content = "package main"
-	} else {
-		f.content = helpers.GetPackage(packageName)
+func isTestFile(packageName, line string) string {
+	if packageName == "t" {
+		return line[:len(line)-3] + "_test.go"
 	}
 
-	return &file{
-		path:    f.path,
-		content: f.content,
+	return line
+}
+
+func convertToFiles(text, packageName string) []string {
+	var res []string
+	files := strings.Split(text, " ")
+
+	for _, file := range files {
+		fileTrimmed := strings.TrimLeft(file, " ")
+
+		if fileTrimmed != "" {
+			res = append(res, isTestFile(packageName, fileTrimmed), fileTrimmed)
+		}
 	}
+
+	return res
+}
+
+func GetFile(fileName string) string {
+	var res string
+	found := false
+
+	for i, character := range fileName {
+		if character == '/' {
+			res = fileName[i+1:]
+			found = true
+		}
+	}
+
+	if found == false {
+		res = fileName
+	}
+
+	return res
+}
+
+func RemoveFile(fileName string) error {
+	errRm := os.Remove(fileName)
+	if errRm != nil {
+		return errRm
+	}
+
+	return nil
+}
+
+func WriteToFile(input, output string) error {
+	content, errRe := helpers.ReadFile(input)
+	if errRe != nil {
+		return errRe
+	}
+
+	e := NewEntries(content)
+	entries := e.Parse()
+
+	for _, file := range entries {
+		err := helpers.WriteLineInFile(file, output)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func CreateFile(path string) error {
+	emptyFile, err := os.Create(path)
+	if err != nil {
+		return err
+	}
+
+	err = emptyFile.Close()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

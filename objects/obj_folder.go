@@ -1,13 +1,23 @@
 package objects
 
-import "github.com/TudorHulban/GoLayouter/helpers"
+import (
+	"os"
+)
 
 type folder struct {
 	path string
 }
 
 func (f folder) writeToDisk() error {
-	return helpers.CreateFolder(f.path)
+	return CreateFolder(f.path)
+}
+
+func CreateFolder(path string) error {
+	err := os.Mkdir(path, os.ModePerm)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func convertToFolder(line string) *folder {

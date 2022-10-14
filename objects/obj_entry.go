@@ -4,7 +4,7 @@ import (
 	"strings"
 
 	"github.com/TudorHulban/GoLayouter/helpers"
-	s "github.com/TudorHulban/GoLayouter/stack"
+	"github.com/TudorHulban/GoLayouter/stack"
 )
 
 type entry struct {
@@ -33,12 +33,12 @@ func convertToEntry(line string) *entry {
 	}
 }
 
-func (e *Entries) Parse(*Entries) []string {
+func (e *Entries) Parse() []string {
 	var res []string
 
-	var stackFolders s.Stack
-	var stackIndents s.Stack
-	var stackPackages s.Stack
+	var stackFolders stack.Stack
+	var stackIndents stack.Stack
+	var stackPackages stack.Stack
 
 	for ix, entry := range *e {
 		if helpers.TypeofFile(entry.folderInfo) == "path" {
@@ -46,23 +46,22 @@ func (e *Entries) Parse(*Entries) []string {
 			stackIndents = nil
 			stackPackages = nil
 
-			res = append(res, helpers.GetPackage(entry.folderInfo))
+			res = append(res, getPackage(entry.folderInfo))
 
-			stackIndents.Push(helpers.GetPackage(entry.folderInfo))
-			helpers.ChangeDirectory(helpers.GetPackage(entry.folderInfo))
+			stackIndents.Push(getPackage(entry.folderInfo))
 
 			continue
 		}
 
 		if helpers.TypeofFile(entry.folderInfo) == "pack" {
-			stackPackages.Push(helpers.GetPackage(entry.folderInfo))
+			stackPackages.Push(getPackage(entry.folderInfo))
 
 			continue
 		}
 
 		if helpers.TypeofFile(entry.folderInfo) == "file" {
 			pack := stackPackages.Peek()
-			files := helpers.ConvertToFiles(entry.folderInfo, pack.(string))
+			files := convertToFiles(entry.folderInfo, pack.(string))
 
 			for _, file := range files {
 				line := stackFolders.String() + "/" + file
@@ -130,4 +129,15 @@ func (e *Entries) Parse(*Entries) []string {
 		//createFolder(stackFolders.String())
 	}
 	return res
+}
+
+func CreateFilesToDisk(files []string) {
+	for _, fileName := range files {
+		if helpers.TypeofFile(GetFile(fileName)) == "file" {
+			CreateFile(fileName)
+		}
+		if helpers.TypeofFile(GetFile(fileName)) == "folder" {
+			CreateFolder(fileName)
+		}
+	}
 }
