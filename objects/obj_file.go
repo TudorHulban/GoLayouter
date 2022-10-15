@@ -7,14 +7,14 @@ import (
 	"github.com/TudorHulban/GoLayouter/helpers"
 )
 
-type file struct {
-	path    string
-	content string
-}
+//type file struct {
+//	path    string
+//	content string
+//}
 
-func (f file) writeToDisk() error {
-	return CreateFile(f.path)
-}
+//func (f file) writeToDisk() error {
+//	return CreateFile(f.path)
+//}
 
 func getPackage(line string) string {
 	return line[2:]
@@ -54,7 +54,7 @@ func GetFile(fileName string) string {
 		}
 	}
 
-	if found == false {
+	if !found {
 		res = fileName
 	}
 
@@ -70,15 +70,7 @@ func RemoveFile(fileName string) error {
 	return nil
 }
 
-func WriteToFile(input, output string) error {
-	content, errRe := helpers.ReadFile(input)
-	if errRe != nil {
-		return errRe
-	}
-
-	e := NewEntries(content)
-	entries := e.Parse()
-
+func WriteToFile(entries []string, output string) error {
 	for _, file := range entries {
 		err := helpers.WriteLineInFile(file, output)
 		if err != nil {

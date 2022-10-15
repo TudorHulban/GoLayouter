@@ -4,13 +4,9 @@ import (
 	"os"
 )
 
-type folder struct {
-	path string
-}
-
-func (f folder) writeToDisk() error {
-	return CreateFolder(f.path)
-}
+//type folder struct {
+//	path string
+//}
 
 func CreateFolder(path string) error {
 	err := os.Mkdir(path, os.ModePerm)
@@ -20,8 +16,8 @@ func CreateFolder(path string) error {
 	return nil
 }
 
-func convertToFolder(line string) *folder {
-	return &folder{
-		path: line,
-	}
-}
+//func convertToFolder(line string) *folder {
+//	return &folder{
+//		path: line,
+//	}
+//}

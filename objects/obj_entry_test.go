@@ -16,14 +16,16 @@ func TestWriteToDisk(t *testing.T) {
 	e := NewEntries(content)
 
 	entries := e.Parse()
-	CreateFilesToDisk(entries)
+
+	errCreate := CreateFilesToDisk(entries)
+	require.NoError(t, errCreate)
 
 	for _, file := range entries {
 		err := helpers.CheckIfExist(file)
 		assert.Equal(t, err, nil, "No match for file", file)
 	}
 
-	for i, _ := range entries {
+	for i := range entries {
 		errRemove := RemoveFile(entries[len(entries)-1-i])
 		require.NoError(t, errRemove)
 	}

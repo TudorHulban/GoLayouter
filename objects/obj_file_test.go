@@ -55,20 +55,35 @@ func TestGetFile(t *testing.T) {
 }
 
 func TestWriteObjectsToFile(t *testing.T) {
-	content, errRe := helpers.ReadByLine(helpers.PathInput)
-	require.NoError(t, errRe)
+	testCases := []struct {
+		description string
+		fileInput   string
+		fileOutput  string
+	}{
+		{"2 levels", "../test_cases/folder_c1", "../test_cases/folder_c1_results"},
+		{"3 levels", "../test_cases/folder_c2", "../test_cases/folder_c2_results"},
+		{"3 levels with going back", "../test_cases/folder_c3", "../test_cases/folder_c3_results"},
+	}
 
-	errClearFile := helpers.ClearFile(helpers.PathOutput)
-	require.NoError(t, errClearFile)
+	for _, tc := range testCases {
+		t.Run(tc.description, func(t *testing.T) {
+			content, errRe := helpers.ReadByLine(tc.fileInput)
+			require.NoError(t, errRe)
 
-	errWr := WriteToFile(helpers.PathInput, helpers.PathOutput)
-	require.NoError(t, errWr)
+			errClearFile := helpers.ClearFile(tc.fileOutput)
+			require.NoError(t, errClearFile)
 
-	e := NewEntries(content)
-	entries := e.Parse()
+			e := NewEntries(content)
+			entries := e.Parse()
 
-	output, errRead := helpers.ReadByLine(helpers.PathOutput)
-	require.NoError(t, errRead)
+			errWr := WriteToFile(entries, tc.fileOutput)
+			require.NoError(t, errWr)
 
-	assert.Equal(t, output, entries, "should be equal")
+			output, errRead := helpers.ReadByLine(tc.fileOutput)
+			require.NoError(t, errRead)
+
+			assert.Equal(t, output, entries, "should be equal")
+		})
+	}
+
 }

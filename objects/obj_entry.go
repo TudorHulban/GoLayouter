@@ -68,10 +68,10 @@ func (e *Entries) Parse() []string {
 				res = append(res, line)
 
 				//createFile(line)
-
-				if pack != "t" {
-					//	writeInFile(pack.(string), line)
-				}
+				//
+				//if pack != "t" {
+				//	//	writeInFile(pack.(string), line)
+				//}
 			}
 
 			continue
@@ -110,7 +110,7 @@ func (e *Entries) Parse() []string {
 			continue
 		}
 
-		for entry.indent < stackIndents.Peek().(int) && len(stackIndents) > 1 {
+		for entry.indent <= stackIndents.Peek().(int) && len(stackIndents) > 1 {
 			if entry.indent == stackIndents.Peek().(int) {
 				stackFolders.Pop()
 				stackPackages.Pop()
@@ -131,13 +131,21 @@ func (e *Entries) Parse() []string {
 	return res
 }
 
-func CreateFilesToDisk(files []string) {
+func CreateFilesToDisk(files []string) error {
 	for _, fileName := range files {
 		if helpers.TypeofFile(GetFile(fileName)) == "file" {
-			CreateFile(fileName)
+			errCreate := CreateFile(fileName)
+			if errCreate != nil {
+				return errCreate
+			}
 		}
 		if helpers.TypeofFile(GetFile(fileName)) == "folder" {
-			CreateFolder(fileName)
+			errCreate := CreateFolder(fileName)
+			if errCreate != nil {
+				return errCreate
+			}
 		}
 	}
+
+	return nil
 }
