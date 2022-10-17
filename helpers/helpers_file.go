@@ -7,9 +7,6 @@ import (
 	"strings"
 )
 
-const PathInput = "../test_cases/folder_c1"
-const PathOutput = "../test_cases/folder_c1_results"
-
 func TypeofFile(fileName string) string {
 	if strings.Contains(fileName, "!") {
 		return "path"
@@ -71,11 +68,8 @@ func ReadByLine(fileName string) ([]string, error) {
 
 func CheckIfExist(path string) error {
 	_, err := os.Stat(path)
-	if err != nil {
-		return err
-	}
 
-	return nil
+	return err
 }
 
 func ChangeDirectory(path string) error {

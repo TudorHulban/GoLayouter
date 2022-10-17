@@ -12,8 +12,7 @@ import (
 func TestCreateFile(t *testing.T) {
 	fileName := "file.go"
 
-	errCreate := CreateFile(fileName)
-	require.NoError(t, errCreate)
+	require.NoError(t, CreateFile(fileName))
 
 	errCheck := helpers.CheckIfExist(fileName)
 	require.NoError(t, errCheck)

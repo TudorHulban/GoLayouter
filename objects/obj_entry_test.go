@@ -9,8 +9,10 @@ import (
 	"github.com/TudorHulban/GoLayouter/helpers"
 )
 
+const _pathInput = "../test_cases/folder_c1"
+
 func TestWriteToDisk(t *testing.T) {
-	content, errRe := helpers.ReadFile(helpers.PathInput)
+	content, errRe := helpers.ReadFile(_pathInput)
 	require.NoError(t, errRe)
 
 	e := NewEntries(content)
