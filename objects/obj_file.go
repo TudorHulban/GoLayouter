@@ -1,31 +1,27 @@
 package objects
 
 import (
+	"log"
 	"os"
 	"strings"
 
 	"github.com/TudorHulban/GoLayouter/helpers"
 )
 
-//type file struct {
-//	path    string
-//	content string
-//}
-
-//func (f file) writeToDisk() error {
-//	return CreateFile(f.path)
-//}
-
 func getPackage(line string) string {
 	return line[2:]
 }
 
-func isTestFile(packageName, line string) string {
+func isTestFile(packageName string) bool {
 	if packageName == "t" {
-		return line[:len(line)-3] + "_test.go"
+		return true
 	}
 
-	return line
+	return false
+}
+
+func createTestFile(line string) string {
+	return line[:len(line)-3] + "_test.go"
 }
 
 func convertToFiles(text, packageName string) []string {
@@ -36,7 +32,12 @@ func convertToFiles(text, packageName string) []string {
 		fileTrimmed := strings.TrimLeft(file, " ")
 
 		if fileTrimmed != "" {
-			res = append(res, isTestFile(packageName, fileTrimmed), fileTrimmed)
+			if isTestFile(packageName) {
+				res = append(res, fileTrimmed, createTestFile(fileTrimmed))
+
+				continue
+			}
+			res = append(res, fileTrimmed)
 		}
 	}
 
@@ -72,7 +73,7 @@ func RemoveFile(fileName string) error {
 
 func WriteToFile(entries []string, output string) error {
 	for _, file := range entries {
-		err := helpers.WriteLineInFile(file, output)
+		err := helpers.WriteTextInFile(file, output)
 		if err != nil {
 			return err
 		}
@@ -84,11 +85,13 @@ func WriteToFile(entries []string, output string) error {
 func CreateFile(path string) error {
 	emptyFile, err := os.Create(path)
 	if err != nil {
+		log.Print("deschidere")
 		return err
 	}
 
 	err = emptyFile.Close()
 	if err != nil {
+		log.Print("inchidere")
 		return err
 	}
 

@@ -46,9 +46,15 @@ func (e *Entries) Parse() []string {
 			stackIndents = nil
 			stackPackages = nil
 
-			res = append(res, getPackage(entry.folderInfo))
+			if getPackage(entry.folderInfo) != "." {
+				stackFolders.Push(getPackage(entry.folderInfo))
+				res = append(res, stackFolders.String())
+				stackIndents.Push(-1)
 
-			stackIndents.Push(getPackage(entry.folderInfo))
+				continue
+			}
+
+			stackIndents.Push(entry.indent)
 
 			continue
 		}
@@ -67,11 +73,6 @@ func (e *Entries) Parse() []string {
 				line := stackFolders.String() + "/" + file
 				res = append(res, line)
 
-				//createFile(line)
-				//
-				//if pack != "t" {
-				//	//	writeInFile(pack.(string), line)
-				//}
 			}
 
 			continue
@@ -82,9 +83,12 @@ func (e *Entries) Parse() []string {
 			stackIndents.Push(0)
 
 			res = append(res, stackFolders.String())
-			//createFolder(stackFolders.String())
 
 			continue
+		}
+
+		if stackIndents.Peek().(int) < 0 {
+			res = res[:len(res)-1]
 		}
 
 		if entry.indent > stackIndents.Peek().(int) {
@@ -93,7 +97,6 @@ func (e *Entries) Parse() []string {
 			stackPackages.Push("")
 
 			res = append(res, stackFolders.String())
-			//createFolder(stackFolders.String())
 
 			continue
 		}
@@ -105,12 +108,11 @@ func (e *Entries) Parse() []string {
 			stackPackages.Push("")
 
 			res = append(res, stackFolders.String())
-			//createFolder(stackFolders.String())
 
 			continue
 		}
 
-		for entry.indent <= stackIndents.Peek().(int) && len(stackIndents) > 1 {
+		for entry.indent < stackIndents.Peek().(int) && len(stackIndents) > 1 {
 			if entry.indent == stackIndents.Peek().(int) {
 				stackFolders.Pop()
 				stackPackages.Pop()
@@ -126,8 +128,8 @@ func (e *Entries) Parse() []string {
 		stackIndents.Push(entry.indent)
 
 		res = append(res, stackFolders.String())
-		//createFolder(stackFolders.String())
 	}
+
 	return res
 }
 
@@ -138,12 +140,16 @@ func CreateFilesToDisk(files []string) error {
 			if errCreate != nil {
 				return errCreate
 			}
+
+			continue
 		}
+
 		if helpers.TypeofFile(GetFile(fileName)) == "folder" {
 			errCreate := CreateFolder(fileName)
 			if errCreate != nil {
 				return errCreate
 			}
+
 		}
 	}
 

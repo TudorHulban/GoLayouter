@@ -72,36 +72,36 @@ func CheckIfExist(path string) error {
 	return err
 }
 
-func ChangeDirectory(path string) error {
-	return os.Chdir(path)
-}
-
 func ClearFile(fileName string) error {
 	f, err := os.OpenFile(fileName, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 	if err != nil {
 		return err
 	}
-	if err := f.Close(); err != nil {
-		return err
-	}
 
-	return nil
+	defer func() {
+		errClose := f.Close()
+		if errClose != nil {
+			err = errClose
+		}
+	}()
+
+	return err
 }
 
-func WriteLineInFile(message, fileName string) error {
+func WriteTextInFile(text, fileName string) error {
 	f, err := os.OpenFile(fileName, os.O_APPEND|os.O_WRONLY, 0644)
 	if err != nil {
 		return err
 	}
 
-	_, err = fmt.Fprintln(f, message)
-	if err != nil {
-		return err
-	}
+	defer func() {
+		_, err = fmt.Fprintln(f, text)
 
-	if err := f.Close(); err != nil {
-		return err
-	}
+		errClose := f.Close()
+		if errClose != nil {
+			err = errClose
+		}
+	}()
 
-	return nil
+	return err
 }

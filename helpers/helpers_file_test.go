@@ -27,7 +27,7 @@ func TestReadFile(t *testing.T) {
 	errClearFile := ClearFile(_input)
 	require.NoError(t, errClearFile)
 
-	errWr := WriteLineInFile(text[0], _input)
+	errWr := WriteTextInFile(text[0], _input)
 	require.NoError(t, errWr)
 
 	content, errRe := ReadFile(_input)
@@ -38,9 +38,8 @@ func TestReadFile(t *testing.T) {
 
 func TestClearFile(t *testing.T) {
 	text := "this should be deleted"
-
-	errWr := WriteLineInFile(text, _input)
-	require.NoError(t, errWr)
+	
+	require.NoError(t, WriteTextInFile(text, _input))
 
 	assert.Equal(t, nil, ClearFile(_input), "should be cleared")
 }
@@ -50,7 +49,7 @@ func TestReadByLine(t *testing.T) {
 	errClearFile := ClearFile(_input)
 	require.NoError(t, errClearFile)
 
-	errWr := WriteLineInFile(text[0], _input)
+	errWr := WriteTextInFile(text[0], _input)
 	require.NoError(t, errWr)
 
 	content, errRe := ReadByLine(_input)
@@ -65,7 +64,7 @@ func TestWriteLineInFile(t *testing.T) {
 	errClearFile := ClearFile(_output)
 	require.NoError(t, errClearFile)
 
-	errWrite := WriteLineInFile(text[0], _output)
+	errWrite := WriteTextInFile(text[0], _output)
 	require.NoError(t, errWrite)
 
 	line, errRl := ReadByLine(_output)

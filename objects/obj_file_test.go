@@ -62,6 +62,8 @@ func TestWriteObjectsToFile(t *testing.T) {
 		{"2 levels", "../test_cases/folder_c1", "../test_cases/folder_c1_results"},
 		{"3 levels", "../test_cases/folder_c2", "../test_cases/folder_c2_results"},
 		{"3 levels with going back", "../test_cases/folder_c3", "../test_cases/folder_c3_results"},
+		{"invalid path", "../test_cases/folder_c4", "../test_cases/folder_c4_results"},
+		{"empty file", "../test_cases/folder_c5", "../test_cases/folder_c5_results"},
 	}
 
 	for _, tc := range testCases {
@@ -69,14 +71,12 @@ func TestWriteObjectsToFile(t *testing.T) {
 			content, errRe := helpers.ReadByLine(tc.fileInput)
 			require.NoError(t, errRe)
 
-			errClearFile := helpers.ClearFile(tc.fileOutput)
-			require.NoError(t, errClearFile)
+			require.NoError(t, helpers.ClearFile(tc.fileOutput))
 
 			e := NewEntries(content)
 			entries := e.Parse()
 
-			errWr := WriteToFile(entries, tc.fileOutput)
-			require.NoError(t, errWr)
+			require.NoError(t, WriteToFile(entries, tc.fileOutput))
 
 			output, errRead := helpers.ReadByLine(tc.fileOutput)
 			require.NoError(t, errRead)
