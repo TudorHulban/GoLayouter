@@ -7,6 +7,42 @@ import (
 	"strings"
 )
 
+func ParsePackage(line string) string {
+	var (
+		start int
+		stop  int
+	)
+	for i, character := range line {
+		if character == '(' {
+			start = i + 1
+
+			continue
+		}
+		if character == ')' {
+			stop = i
+		}
+	}
+
+	return line[start:stop]
+}
+
+func RemovePackageName(line string) string {
+	var stop int
+
+	for i, character := range line {
+		if character == '(' {
+			stop = i
+
+			break
+		}
+	}
+	if stop == 0 {
+		stop = len(line)
+	}
+
+	return line[:stop]
+}
+
 func TypeofFile(fileName string) string {
 	if strings.Contains(fileName, "!") {
 		return "path"

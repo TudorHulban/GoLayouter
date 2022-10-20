@@ -18,6 +18,7 @@ func TestCreateFile(t *testing.T) {
 	require.NoError(t, errCheck)
 
 	assert.Equal(t, errCheck, nil, "No error should be returned while checking")
+	require.NoError(t, RemoveFile(fileName), "removing the file")
 }
 
 func TestRemoveFile(t *testing.T) {
@@ -63,7 +64,8 @@ func TestWriteObjectsToFile(t *testing.T) {
 		{"3 levels", "../test_cases/folder_c2", "../test_cases/folder_c2_results"},
 		{"3 levels with going back", "../test_cases/folder_c3", "../test_cases/folder_c3_results"},
 		{"invalid path", "../test_cases/folder_c4", "../test_cases/folder_c4_results"},
-		{"empty file", "../test_cases/folder_c5", "../test_cases/folder_c5_results"},
+		{"file without packages", "../test_cases/folder_c5", "../test_cases/folder_c5_results"},
+		{"files + paths + packages", "../test_cases/folder_c6", "../test_cases/folder_c6_results"},
 	}
 
 	for _, tc := range testCases {

@@ -7,6 +7,14 @@ import (
 
 type Stack []any
 
+func (s *Stack) IsEmpty() bool {
+	if len(*s) == 0 {
+		return true
+	}
+
+	return false
+}
+
 func (s *Stack) Push(item any) {
 	*s = append(*s, item)
 }

@@ -6,6 +6,18 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func TestStack_IsEmpty(t *testing.T) {
+	var stackFolders Stack
+
+	require.Equal(t, true, stackFolders.IsEmpty(), "is empty testing")
+
+	stackFolders.Push("folder1")
+	stackFolders.Push("subfolder")
+
+	require.NotEqual(t, true, stackFolders.IsEmpty(), "is empty testing")
+
+}
+
 func TestPush(t *testing.T) {
 	var stackFolders Stack
 

@@ -1,6 +1,7 @@
 package objects
 
 import (
+	"log"
 	"strings"
 
 	"github.com/TudorHulban/GoLayouter/helpers"
@@ -13,6 +14,8 @@ type entry struct {
 }
 
 type Entries []*entry
+
+const _defaultPackage = "package main"
 
 func NewEntries(content []string) *Entries {
 	var res Entries
@@ -61,15 +64,31 @@ func (e *Entries) Parse() []string {
 
 		if helpers.TypeofFile(entry.folderInfo) == "pack" {
 			stackPackages.Push(getPackage(entry.folderInfo))
-
+			log.Print(stackPackages)
 			continue
 		}
 
 		if helpers.TypeofFile(entry.folderInfo) == "file" {
 			pack := stackPackages.Peek()
-			files := convertToFiles(entry.folderInfo, pack.(string))
+
+			if stackPackages.IsEmpty() {
+				stackPackages.Push(_defaultPackage)
+
+				pack = _defaultPackage
+			}
+
+			if stackPackages.Peek() == "t" {
+				stackPackages.Pop()
+
+				pack = stackPackages.Peek().(string)
+
+				stackPackages.Push("t")
+			}
+
+			files := convertToFiles(entry.folderInfo, stackPackages.Peek().(string))
 
 			for _, file := range files {
+				file = file + "(" + pack.(string) + ")"
 				line := stackFolders.String() + "/" + file
 				res = append(res, line)
 
@@ -94,7 +113,6 @@ func (e *Entries) Parse() []string {
 		if entry.indent > stackIndents.Peek().(int) {
 			stackFolders.Push(entry.folderInfo)
 			stackIndents.Push(entry.indent)
-			stackPackages.Push("")
 
 			res = append(res, stackFolders.String())
 
@@ -105,7 +123,6 @@ func (e *Entries) Parse() []string {
 			stackFolders.Pop()
 			stackFolders.Push(entry.folderInfo)
 			stackIndents.Push(entry.indent)
-			stackPackages.Push("")
 
 			res = append(res, stackFolders.String())
 
@@ -135,10 +152,19 @@ func (e *Entries) Parse() []string {
 
 func CreateFilesToDisk(files []string) error {
 	for _, fileName := range files {
-		if helpers.TypeofFile(GetFile(fileName)) == "file" {
-			errCreate := CreateFile(fileName)
+		if helpers.TypeofFile(GetFile(helpers.RemovePackageName(fileName))) == "file" {
+
+			line := helpers.ParsePackage(fileName)
+			file := helpers.RemovePackageName(fileName)
+
+			errCreate := CreateFile(file)
 			if errCreate != nil {
 				return errCreate
+			}
+
+			errWrite := helpers.WriteTextInFile(line, file)
+			if errWrite != nil {
+				return errWrite
 			}
 
 			continue

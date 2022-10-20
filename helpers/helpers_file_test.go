@@ -11,6 +11,31 @@ import (
 const _input = "helpers.in"
 const _output = "helpers.out"
 
+func TestRemovePackageName(t *testing.T) {
+	testCases := []struct {
+		description string
+		input       string
+		output      string
+	}{
+		{"with package", "program/objects/obj_folder.go(objectes)", "program/objects/obj_folder.go"},
+		{"without package & only folders", "folder-root1/subfolder1", "folder-root1/subfolder1"},
+		{"without package + files", "folder-root1/subfolder1/main.go", "folder-root1/subfolder1/main.go"},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.description, func(t *testing.T) {
+			assert.Equal(t, tc.output, RemovePackageName(tc.input))
+		})
+	}
+}
+
+func TestParsePackage(t *testing.T) {
+	got := "program/objects/obj_folder.go(objectes)"
+	want := "objectes"
+
+	assert.Equal(t, ParsePackage(got), want, "test parse")
+}
+
 func TestTypeofFile(t *testing.T) {
 	got := []string{"! .", "# package main", "file.go", "folder"}
 	want := []string{"path", "pack", "file", "folder"}
@@ -38,7 +63,7 @@ func TestReadFile(t *testing.T) {
 
 func TestClearFile(t *testing.T) {
 	text := "this should be deleted"
-	
+
 	require.NoError(t, WriteTextInFile(text, _input))
 
 	assert.Equal(t, nil, ClearFile(_input), "should be cleared")

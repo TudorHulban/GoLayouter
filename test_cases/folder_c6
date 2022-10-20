@@ -1,1 +1,14 @@
-# t
+! /home/apetroaei/ram
+program
+ helpers1
+ # package helpers
+  helpers.go
+ # t
+  helpers_file.go
+! .
+ objects1
+ # package objects
+ obj_folder.go
+ # t
+ obj_entry.go
+ obj_file.go

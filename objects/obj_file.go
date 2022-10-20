@@ -1,7 +1,6 @@
 package objects
 
 import (
-	"log"
 	"os"
 	"strings"
 
@@ -13,11 +12,7 @@ func getPackage(line string) string {
 }
 
 func isTestFile(packageName string) bool {
-	if packageName == "t" {
-		return true
-	}
-
-	return false
+	return packageName == "t"
 }
 
 func createTestFile(line string) string {
@@ -63,7 +58,7 @@ func GetFile(fileName string) string {
 }
 
 func RemoveFile(fileName string) error {
-	errRm := os.Remove(fileName)
+	errRm := os.Remove(helpers.RemovePackageName(fileName))
 	if errRm != nil {
 		return errRm
 	}
@@ -85,13 +80,11 @@ func WriteToFile(entries []string, output string) error {
 func CreateFile(path string) error {
 	emptyFile, err := os.Create(path)
 	if err != nil {
-		log.Print("deschidere")
 		return err
 	}
 
 	err = emptyFile.Close()
 	if err != nil {
-		log.Print("inchidere")
 		return err
 	}
 
