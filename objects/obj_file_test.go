@@ -14,7 +14,7 @@ func TestCreateFile(t *testing.T) {
 
 	require.NoError(t, CreateFile(fileName))
 
-	errCheck := helpers.CheckIfExist(fileName)
+	errCheck := helpers.CheckIfFileExists(fileName)
 	require.NoError(t, errCheck)
 
 	assert.Equal(t, errCheck, nil, "No error should be returned while checking")
@@ -30,7 +30,7 @@ func TestRemoveFile(t *testing.T) {
 	errRemoveFile := RemoveFile(fileName)
 	require.NoError(t, errRemoveFile)
 
-	fileExist := helpers.CheckIfExist(fileName)
+	fileExist := helpers.CheckIfFileExists(fileName)
 
 	assert.NotEqual(t, fileExist, nil, "no nil should be returned while checking")
 }
@@ -70,7 +70,7 @@ func TestWriteObjectsToFile(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.description, func(t *testing.T) {
-			content, errRe := helpers.ReadByLine(tc.fileInput)
+			content, errRe := helpers.ReadFile(tc.fileInput)
 			require.NoError(t, errRe)
 
 			require.NoError(t, helpers.ClearFile(tc.fileOutput))
@@ -80,7 +80,7 @@ func TestWriteObjectsToFile(t *testing.T) {
 
 			require.NoError(t, WriteToFile(entries, tc.fileOutput))
 
-			output, errRead := helpers.ReadByLine(tc.fileOutput)
+			output, errRead := helpers.ReadFile(tc.fileOutput)
 			require.NoError(t, errRead)
 
 			assert.Equal(t, output, entries, "should be equal")

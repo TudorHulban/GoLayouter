@@ -22,10 +22,10 @@ func TestWriteToDisk(t *testing.T) {
 	require.NoError(t, CreateFilesToDisk(entries), "create files to disk")
 
 	for _, file := range entries {
-		assert.Equal(t, helpers.CheckIfExist(helpers.RemovePackageName(file)), nil, "check if exists", file)
+		assert.Equal(t, helpers.CheckIfFileExists(helpers.RemovePackageName(file)), nil, "check if exists", file)
 	}
 
-	for i := range entries {
-		require.NoError(t, RemoveFile(entries[len(entries)-1-i]))
+	for ix := range entries {
+		require.NoError(t, RemoveFile(entries[len(entries)-1-ix]))
 	}
 }

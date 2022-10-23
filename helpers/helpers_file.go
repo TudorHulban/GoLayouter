@@ -2,54 +2,57 @@ package helpers
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"os"
 	"strings"
 )
 
-func ParsePackage(line string) string {
-	var (
-		start int
-		stop  int
-	)
-	for i, character := range line {
+func ParsePackage(text string) string {
+	var start, stop int
+
+	for ix, character := range text {
 		if character == '(' {
-			start = i + 1
+			start = ix + 1
 
 			continue
 		}
+
 		if character == ')' {
-			stop = i
+			stop = ix
 		}
 	}
 
-	return line[start:stop]
+	return text[start:stop]
 }
 
-func RemovePackageName(line string) string {
+func RemovePackageName(text string) string {
 	var stop int
 
-	for i, character := range line {
+	for ix, character := range text {
 		if character == '(' {
-			stop = i
+			stop = ix
 
 			break
 		}
 	}
+
 	if stop == 0 {
-		stop = len(line)
+		return text
 	}
 
-	return line[:stop]
+	return text[:stop]
 }
 
 func TypeofFile(fileName string) string {
 	if strings.Contains(fileName, "!") {
 		return "path"
 	}
+
 	if strings.Contains(fileName, ".") {
 		return "file"
 	}
+
 	if strings.Contains(fileName, "#") {
 		return "pack"
 	}
@@ -59,10 +62,15 @@ func TypeofFile(fileName string) string {
 
 // ReadFile  is a helper reading file contents to a slice.
 func ReadFile(filePath string) ([]string, error) {
-	fileHandler, err := os.Open(filePath)
-	if err != nil {
-		return nil, err
+	fileHandler, errOp := os.Open(filePath)
+	if errOp != nil {
+		return nil, errOp
 	}
+
+	var errClo error
+	defer func() {
+		errClo = fileHandler.Close()
+	}()
 
 	var res []string
 
@@ -71,41 +79,20 @@ func ReadFile(filePath string) ([]string, error) {
 		res = append(res, scanner.Text())
 	}
 
-	err = fileHandler.Close()
-	if err != nil {
-		return nil, err
-	}
-
-	return res, nil
+	return res, errClo
 }
 
-// ReadByLine readFile is a helper reading file contents line by line.
-func ReadByLine(fileName string) ([]string, error) {
-	var res []string
-
-	file, err := os.Open(fileName)
-	if err != nil {
-		return nil, err
+func CheckIfFileExists(path string) error {
+	_, errStat := os.Stat(path)
+	if errStat == nil {
+		return nil
 	}
 
-	fileScanner := bufio.NewScanner(file)
-	fileScanner.Split(bufio.ScanLines)
-
-	for fileScanner.Scan() {
-		res = append(res, fileScanner.Text())
+	if errors.Is(errStat, os.ErrNotExist) {
+		return errStat
 	}
 
-	if err = file.Close(); err != nil {
-		return nil, err
-	}
-
-	return res, nil
-}
-
-func CheckIfExist(path string) error {
-	_, err := os.Stat(path)
-
-	return err
+	return fmt.Errorf("os error: %w", errStat)
 }
 
 func ClearFile(fileName string) error {

@@ -27,12 +27,12 @@ func NewEntries(content []string) *Entries {
 	return &res
 }
 
-func convertToEntry(line string) *entry {
-	trimmed := strings.TrimLeft(line, " ")
+func convertToEntry(lineOfText string) *entry {
+	trimmed := strings.TrimLeft(lineOfText, " ")
 
 	return &entry{
 		folderInfo: trimmed,
-		indent:     len(line) - len(trimmed),
+		indent:     len(lineOfText) - len(trimmed),
 	}
 }
 
@@ -157,13 +157,11 @@ func CreateFilesToDisk(files []string) error {
 			line := helpers.ParsePackage(fileName)
 			file := helpers.RemovePackageName(fileName)
 
-			errCreate := CreateFile(file)
-			if errCreate != nil {
+			if errCreate := CreateFile(file); errCreate != nil {
 				return errCreate
 			}
 
-			errWrite := helpers.WriteTextInFile(line, file)
-			if errWrite != nil {
+			if errWrite := helpers.WriteTextInFile(line, file); errWrite != nil {
 				return errWrite
 			}
 

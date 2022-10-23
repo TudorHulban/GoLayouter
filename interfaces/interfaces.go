@@ -1,7 +1,8 @@
 package interfaces
 
 type IWritter interface {
-	writeToDisk() error
+	WriteToDisk() error
 }
 
-// TO DO
+// TODO
+// add objects that satisfy the interface
