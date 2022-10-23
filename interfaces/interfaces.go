@@ -4,5 +4,5 @@ type IWritter interface {
 	WriteToDisk() error
 }
 
-// TODO
+// TODO:
 // add objects that satisfy the interface

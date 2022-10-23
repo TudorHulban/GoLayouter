@@ -2,7 +2,7 @@
 Application creates go app layout folders and files as per the specified file.   
 The operations in the input file are as below.
 ## Change Directory 
-Prefix the new folder with an exclamation mark.
+Prefix the target folder with an exclamation mark.
 ```sh
 ! path
 ```

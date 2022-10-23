@@ -5,18 +5,33 @@ import (
 	"strings"
 
 	"github.com/TudorHulban/GoLayouter/helpers"
+	"github.com/TudorHulban/GoLayouter/interfaces"
 )
 
-func getPackage(line string) string {
+type File struct {
+	Path        string
+	HasTestFile bool
+}
+
+var _ interfaces.IWritter = &File{}
+
+func (f *File) CreateTestFile() error {
+	// TODO: identify test file name and create a path
+	// TODO: create file as per above path
+
+	return nil
+}
+
+func getCommand(line string) string {
 	return line[2:]
 }
 
-func isTestFile(packageName string) bool {
-	return packageName == "t"
+func isTestFile(text string) bool {
+	return text == "t"
 }
 
-func createTestFile(line string) string {
-	return line[:len(line)-3] + "_test.go"
+func createGolangTestFile(text string) string {
+	return text[:len(text)-3] + "_test.go"
 }
 
 func convertToFiles(text, packageName string) []string {
@@ -32,6 +47,7 @@ func convertToFiles(text, packageName string) []string {
 
 				continue
 			}
+
 			res = append(res, fileTrimmed)
 		}
 	}
@@ -41,11 +57,11 @@ func convertToFiles(text, packageName string) []string {
 
 func GetFile(fileName string) string {
 	var res string
-	found := false
+	var found bool
 
-	for i, character := range fileName {
+	for ix, character := range fileName {
 		if character == '/' {
-			res = fileName[i+1:]
+			res = fileName[ix+1:]
 			found = true
 		}
 	}
@@ -58,18 +74,12 @@ func GetFile(fileName string) string {
 }
 
 func RemoveFile(fileName string) error {
-	errRm := os.Remove(helpers.RemovePackageName(fileName))
-	if errRm != nil {
-		return errRm
-	}
-
-	return nil
+	return os.Remove(helpers.RemovePackageName(fileName))
 }
 
 func WriteToFile(entries []string, output string) error {
 	for _, file := range entries {
-		err := helpers.WriteTextInFile(file, output)
-		if err != nil {
+		if err := helpers.WriteTextInFile(file, output); err != nil {
 			return err
 		}
 	}
@@ -83,10 +93,5 @@ func CreateFile(path string) error {
 		return err
 	}
 
-	err = emptyFile.Close()
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return emptyFile.Close()
 }

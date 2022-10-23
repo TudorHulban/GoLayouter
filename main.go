@@ -10,4 +10,5 @@ func main() {
 		fmt.Println("Usage is: ")
 		os.Exit(1)
 	}
+
 }
