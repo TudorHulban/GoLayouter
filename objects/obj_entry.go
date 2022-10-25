@@ -17,6 +17,15 @@ type Entries []*entry
 
 const _defaultPackage = "package main"
 
+func convertToEntry(lineOfText string) *entry {
+	trimmed := strings.TrimLeft(lineOfText, " ")
+
+	return &entry{
+		folderInfo: trimmed,
+		indent:     len(lineOfText) - len(trimmed),
+	}
+}
+
 func NewEntries(content []string) *Entries {
 	var res Entries
 
@@ -25,15 +34,6 @@ func NewEntries(content []string) *Entries {
 	}
 
 	return &res
-}
-
-func convertToEntry(lineOfText string) *entry {
-	trimmed := strings.TrimLeft(lineOfText, " ")
-
-	return &entry{
-		folderInfo: trimmed,
-		indent:     len(lineOfText) - len(trimmed),
-	}
 }
 
 func (e *Entries) Parse() []string {
@@ -49,8 +49,8 @@ func (e *Entries) Parse() []string {
 			stackIndents = nil
 			stackPackages = nil
 
-			if getPackage(entry.folderInfo) != "." {
-				stackFolders.Push(getPackage(entry.folderInfo))
+			if helpers.GetCommand(entry.folderInfo) != "." {
+				stackFolders.Push(helpers.GetCommand(entry.folderInfo))
 				res = append(res, stackFolders.String())
 				stackIndents.Push(-1)
 
@@ -63,7 +63,7 @@ func (e *Entries) Parse() []string {
 		}
 
 		if helpers.TypeofFile(entry.folderInfo) == "pack" {
-			stackPackages.Push(getPackage(entry.folderInfo))
+			stackPackages.Push(helpers.GetCommand(entry.folderInfo))
 			log.Print(stackPackages)
 			continue
 		}
@@ -85,7 +85,7 @@ func (e *Entries) Parse() []string {
 				stackPackages.Push("t")
 			}
 
-			files := convertToFiles(entry.folderInfo, stackPackages.Peek().(string))
+			files := helpers.ConvertToFiles(entry.folderInfo, stackPackages.Peek().(string))
 
 			for _, file := range files {
 				file = file + "(" + pack.(string) + ")"
@@ -150,30 +150,32 @@ func (e *Entries) Parse() []string {
 	return res
 }
 
-func CreateFilesToDisk(files []string) error {
-	for _, fileName := range files {
-		if helpers.TypeofFile(GetFile(helpers.RemovePackageName(fileName))) == "file" {
+func ContentSlicing(content []string) ([]File, []Folder) {
+	var files []File
+	var folders []Folder
 
-			line := helpers.ParsePackage(fileName)
-			file := helpers.RemovePackageName(fileName)
+	for _, line := range content {
+		if helpers.TypeofFile(helpers.GetFileName(line)) == "file" {
+			packageName := helpers.ParsePackage(helpers.GetFileName(line))
+			path := helpers.RemovePackageName(line)
 
-			if errCreate := CreateFile(file); errCreate != nil {
-				return errCreate
-			}
-
-			if errWrite := helpers.WriteTextInFile(line, file); errWrite != nil {
-				return errWrite
-			}
+			files = append(files, File{Path: path, Content: packageName})
 
 			continue
 		}
 
-		if helpers.TypeofFile(GetFile(fileName)) == "folder" {
-			errCreate := CreateFolder(fileName)
-			if errCreate != nil {
-				return errCreate
-			}
+		if helpers.TypeofFile(helpers.GetFileName(line)) == "folder" {
+			folders = append(folders, Folder{Path: line})
+		}
+	}
 
+	return files, folders
+}
+
+func WriteToFile(entries []string, output string) error {
+	for _, file := range entries {
+		if err := helpers.WriteTextInFile(file, output); err != nil {
+			return err
 		}
 	}
 

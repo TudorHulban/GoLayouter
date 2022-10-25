@@ -12,27 +12,30 @@ import (
 func TestCreateFile(t *testing.T) {
 	fileName := "file.go"
 
-	require.NoError(t, CreateFile(fileName))
+	f := &File{
+		Path:    fileName,
+		Content: "content",
+	}
 
-	errCheck := helpers.CheckIfFileExists(fileName)
-	require.NoError(t, errCheck)
+	require.NoError(t, f.CreateFile(), helpers.CheckIfFileExists(fileName))
 
-	assert.Equal(t, errCheck, nil, "No error should be returned while checking")
-	require.NoError(t, RemoveFile(fileName), "removing the file")
+	content, errRead := helpers.ReadFile(fileName)
+
+	require.NoError(t, errRead)
+	assert.Equal(t, content[0], f.Content)
+
+	require.NoError(t, RemoveFile(fileName))
 }
 
 func TestRemoveFile(t *testing.T) {
 	fileName := "file.go"
 
-	errCreate := CreateFile(fileName)
-	require.NoError(t, errCreate)
-
-	errRemoveFile := RemoveFile(fileName)
-	require.NoError(t, errRemoveFile)
-
-	fileExist := helpers.CheckIfFileExists(fileName)
-
-	assert.NotEqual(t, fileExist, nil, "no nil should be returned while checking")
+	f := &File{
+		Path:    fileName,
+		Content: "",
+	}
+	require.NoError(t, f.CreateFile(), RemoveFile(fileName))
+	require.Error(t, helpers.CheckIfFileExists(fileName))
 }
 
 func TestGetFile(t *testing.T) {
@@ -48,10 +51,9 @@ func TestGetFile(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.description, func(t *testing.T) {
-			assert.Equal(t, tc.output, GetFile(tc.input))
+			assert.Equal(t, tc.output, helpers.GetFileName(tc.input))
 		})
 	}
-
 }
 
 func TestWriteObjectsToFile(t *testing.T) {
@@ -71,9 +73,7 @@ func TestWriteObjectsToFile(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.description, func(t *testing.T) {
 			content, errRe := helpers.ReadFile(tc.fileInput)
-			require.NoError(t, errRe)
-
-			require.NoError(t, helpers.ClearFile(tc.fileOutput))
+			require.NoError(t, errRe, helpers.ClearFile(tc.fileOutput))
 
 			e := NewEntries(content)
 			entries := e.Parse()
