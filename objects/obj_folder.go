@@ -10,7 +10,7 @@ type Folder struct {
 
 //var _ interfaces.IWritter = &Folder{}
 
-func (f Folder) CreateFile() error {
+func (f Folder) WriteToDisk() error {
 	err := os.Mkdir(f.Path, os.ModePerm)
 	if err != nil {
 		return err

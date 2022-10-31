@@ -17,7 +17,7 @@ func TestCreateFile(t *testing.T) {
 		Content: "content",
 	}
 
-	require.NoError(t, f.CreateFile(), helpers.CheckIfFileExists(fileName))
+	require.NoError(t, f.WriteToDisk(), helpers.CheckIfFileExists(fileName))
 
 	content, errRead := helpers.ReadFile(fileName)
 
@@ -34,7 +34,7 @@ func TestRemoveFile(t *testing.T) {
 		Path:    fileName,
 		Content: "",
 	}
-	require.NoError(t, f.CreateFile(), RemoveFile(fileName))
+	require.NoError(t, f.WriteToDisk(), RemoveFile(fileName))
 	require.Error(t, helpers.CheckIfFileExists(fileName))
 }
 

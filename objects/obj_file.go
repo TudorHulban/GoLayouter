@@ -13,7 +13,7 @@ type File struct {
 
 //var _ interfaces.IWritter = &File{}
 
-func (f File) CreateFile() error {
+func (f File) WriteToDisk() error {
 	emptyFile, err := os.Create(f.Path)
 	if err != nil {
 		return err

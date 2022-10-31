@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/TudorHulban/GoLayouter/helpers"
+	"github.com/TudorHulban/GoLayouter/interfaces"
 	"github.com/TudorHulban/GoLayouter/stack"
 )
 
@@ -150,26 +151,25 @@ func (e *Entries) Parse() []string {
 	return res
 }
 
-func ContentSlicing(content []string) ([]File, []Folder) {
-	var files []File
-	var folders []Folder
+func ConvertToIWritter(content []string) []interfaces.IWritter {
+	var writters []interfaces.IWritter
 
 	for _, line := range content {
 		if helpers.TypeofFile(helpers.GetFileName(line)) == "file" {
 			packageName := helpers.ParsePackage(helpers.GetFileName(line))
 			path := helpers.RemovePackageName(line)
 
-			files = append(files, File{Path: path, Content: packageName})
+			writters = append(writters, File{Path: path, Content: packageName})
 
 			continue
 		}
 
 		if helpers.TypeofFile(helpers.GetFileName(line)) == "folder" {
-			folders = append(folders, Folder{Path: line})
+			writters = append(writters, Folder{Path: line})
 		}
 	}
 
-	return files, folders
+	return writters
 }
 
 func WriteToFile(entries []string, output string) error {
