@@ -23,8 +23,6 @@ func (f File) DeletePath() error {
 	return RemoveFile(f.GetPath())
 }
 
-//var _ interfaces.IWritter = &File{}
-
 func (f File) WriteToDisk() error {
 	emptyFile, err := os.Create(f.Path)
 	if err != nil {

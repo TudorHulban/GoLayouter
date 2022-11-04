@@ -170,13 +170,3 @@ func ConvertToIWritter(content []string) []interfaces.IWritter {
 
 	return writters
 }
-
-func WriteToFile(entries []string, output string) error {
-	for _, file := range entries {
-		if err := helpers.WriteTextInFile(file, output); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}

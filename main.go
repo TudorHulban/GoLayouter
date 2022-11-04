@@ -21,7 +21,7 @@ func main() {
 	entries := e.Parse()
 
 	writter := objects.ConvertToIWritter(entries)
-	err = interfaces.Write(writter)
+	err = interfaces.WriteToDisk(writter)
 	if err != nil {
 		log.Print(err)
 	}
