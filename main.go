@@ -1,14 +1,28 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"os"
+
+	"github.com/TudorHulban/GoLayouter/helpers"
+	"github.com/TudorHulban/GoLayouter/interfaces"
+	"github.com/TudorHulban/GoLayouter/objects"
 )
 
 func main() {
-	if len(os.Args) != 2 {
-		fmt.Println("Usage is: ")
-		os.Exit(1)
+	fileSource := os.Args[1]
+
+	content, err := helpers.ReadFile(fileSource)
+	if err != nil {
+		log.Print(err)
 	}
 
+	e := objects.NewEntries(content)
+	entries := e.Parse()
+
+	writter := objects.ConvertToIWritter(entries)
+	err = interfaces.Write(writter)
+	if err != nil {
+		log.Print(err)
+	}
 }

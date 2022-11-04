@@ -85,9 +85,9 @@ func TestWriteLineInFile(t *testing.T) {
 }
 
 func TestFileExists(t *testing.T) {
-	err1 := CheckIfFileExists("x")
+	err1 := CheckIfPathExists("x")
 	require.Error(t, err1, err1) // stat x: no such file or directory
 
-	err2 := CheckIfFileExists("/var")
+	err2 := CheckIfPathExists("/var")
 	require.NoError(t, err2, err2)
 }

@@ -4,7 +4,6 @@ import (
 	"log"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/TudorHulban/GoLayouter/helpers"
@@ -19,7 +18,6 @@ func TestConvertToIWritter(t *testing.T) {
 
 	e := NewEntries(content)
 	entries := e.Parse()
-
 	writter := ConvertToIWritter(entries)
 
 	for _, element := range writter {
@@ -28,26 +26,14 @@ func TestConvertToIWritter(t *testing.T) {
 }
 
 func TestWrite(t *testing.T) {
-	file := File{
-		Path:    "directory/main.go",
-		Content: "package objects",
-	}
+	content, errRead := helpers.ReadFile(_pathInput)
+	require.NoError(t, errRead)
 
-	folder := Folder{
-		Path: "directory",
-	}
+	e := NewEntries(content)
+	entries := e.Parse()
+	writter := ConvertToIWritter(entries)
 
-	writter := []interfaces.IWritter{folder, file}
-
-	for _, element := range writter {
-		element.WriteToDisk()
-	}
-
-	require.NoError(t, helpers.CheckIfFileExists(file.Path))
-	require.NoError(t, helpers.CheckIfFileExists(folder.Path))
-
-	content, errRead := helpers.ReadFile(file.Path)
-
-	require.NoError(t, errRead, "reading the file path")
-	assert.Equal(t, content[0], file.Content)
+	require.NoError(t, interfaces.Write(writter))
+	require.NoError(t, interfaces.CheckInterface(writter))
+	require.NoError(t, interfaces.DeleteInterface(writter))
 }

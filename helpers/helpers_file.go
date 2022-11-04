@@ -8,6 +8,39 @@ import (
 	"strings"
 )
 
+func GetCommand(line string) string {
+	return line[2:]
+}
+
+func IsTestFile(text string) bool {
+	return text == "t"
+}
+
+func CreateGolangTestFile(text string) string {
+	return text[:len(text)-3] + "_test.go"
+}
+
+func ConvertToFiles(text, packageName string) []string {
+	var res []string
+	files := strings.Split(text, " ")
+
+	for _, file := range files {
+		fileTrimmed := strings.TrimLeft(file, " ")
+
+		if fileTrimmed != "" {
+			if IsTestFile(packageName) {
+				res = append(res, fileTrimmed, CreateGolangTestFile(fileTrimmed))
+
+				continue
+			}
+
+			res = append(res, fileTrimmed)
+		}
+	}
+
+	return res
+}
+
 func ParsePackage(text string) string {
 	var start, stop int
 
@@ -24,6 +57,24 @@ func ParsePackage(text string) string {
 	}
 
 	return text[start:stop]
+}
+
+func GetFileName(path string) string {
+	var res string
+	var found bool
+
+	for ix, character := range path {
+		if character == '/' {
+			res = path[ix+1:]
+			found = true
+		}
+	}
+
+	if !found {
+		res = path
+	}
+
+	return res
 }
 
 func RemovePackageName(text string) string {
@@ -82,7 +133,7 @@ func ReadFile(filePath string) ([]string, error) {
 	return res, errClo
 }
 
-func CheckIfFileExists(path string) error {
+func CheckIfPathExists(path string) error {
 	_, errStat := os.Stat(path)
 	if errStat == nil {
 		return nil

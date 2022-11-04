@@ -11,6 +11,18 @@ type File struct {
 	Content string
 }
 
+func (f File) GetPath() string {
+	return f.Path
+}
+
+func (f File) CheckIfExists() error {
+	return helpers.CheckIfPathExists(f.GetPath())
+}
+
+func (f File) DeletePath() error {
+	return RemoveFile(f.GetPath())
+}
+
 //var _ interfaces.IWritter = &File{}
 
 func (f File) WriteToDisk() error {

@@ -1,7 +1,6 @@
 package objects
 
 import (
-	"log"
 	"strings"
 
 	"github.com/TudorHulban/GoLayouter/helpers"
@@ -65,7 +64,7 @@ func (e *Entries) Parse() []string {
 
 		if helpers.TypeofFile(entry.folderInfo) == "pack" {
 			stackPackages.Push(helpers.GetCommand(entry.folderInfo))
-			log.Print(stackPackages)
+
 			continue
 		}
 
