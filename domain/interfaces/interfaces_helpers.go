@@ -2,13 +2,7 @@ package interfaces
 
 import (
 	"bufio"
-	"log"
 	"os"
-	"testing"
-
-	"github.com/stretchr/testify/require"
-
-	"github.com/TudorHulban/GoLayouter/objects"
 )
 
 const _pathInput = "../test_cases/folder_c6"
@@ -33,19 +27,6 @@ func IRWritterReadFile(filePath string) ([]string, error) {
 	}
 
 	return res, errClo
-}
-
-func TestConvertToIWritter(t *testing.T) {
-	content, errRead := IRWritterReadFile(_pathInput)
-	require.NoError(t, errRead)
-
-	e := objects.NewEntries(content)
-	entries := e.Parse()
-	writter := objects.ConvertToIWritter(entries)
-
-	for _, element := range writter {
-		log.Print(element)
-	}
 }
 
 func WriteToDisk(paths []IWritter) error {
