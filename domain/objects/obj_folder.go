@@ -3,11 +3,15 @@ package objects
 import (
 	"os"
 
-	"github.com/TudorHulban/GoLayouter/helpers"
+	"github.com/TudorHulban/GoLayouter/app/helpers/helpers"
 )
 
 type Folder struct {
 	Path string
+}
+
+func (f *Folder) SetPath(path string) {
+	(*f).Path = path
 }
 
 func (f Folder) DeletePath() error {

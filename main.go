@@ -4,15 +4,14 @@ import (
 	"log"
 	"os"
 
-	"github.com/TudorHulban/GoLayouter/helpers"
-	"github.com/TudorHulban/GoLayouter/interfaces"
-	"github.com/TudorHulban/GoLayouter/objects"
+	"github.com/TudorHulban/GoLayouter/domain/interfaces"
+	"github.com/TudorHulban/GoLayouter/domain/objects"
 )
 
 func main() {
 	fileSource := os.Args[1]
 
-	content, err := helpers.ReadFile(fileSource)
+	content, err := interfaces.IRWritterReadFile(fileSource)
 	if err != nil {
 		log.Print(err)
 	}
@@ -20,7 +19,7 @@ func main() {
 	e := objects.NewEntries(content)
 	entries := e.Parse()
 
-	writter := objects.ConvertToIWritter(entries)
+	writter := interfaces.ConvertToIWritter(entries)
 	err = interfaces.WriteToDisk(writter)
 	if err != nil {
 		log.Print(err)

@@ -6,7 +6,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/TudorHulban/GoLayouter/objects"
+	"github.com/TudorHulban/GoLayouter/domain/objects"
 )
 
 func TestWrite(t *testing.T) {
@@ -15,20 +15,21 @@ func TestWrite(t *testing.T) {
 
 	e := objects.NewEntries(content)
 	entries := e.Parse()
-	writter := objects.ConvertToIWritter(entries)
+	writter := ConvertToIWritter(entries)
 
-	require.NoError(t, WriteToDisk(writter))
-	require.NoError(t, CheckPathsExists(writter))
-	require.NoError(t, DeletePaths(writter))
+	require.NoError(t, WriteToDisk(writter), "writing error")
+	require.NoError(t, CheckPathsExists(writter), "checking error")
+	require.NoError(t, DeletePaths(writter), "deleting error")
 }
 
 func TestConvertToIWritter(t *testing.T) {
 	content, errRead := IRWritterReadFile(_pathInput)
-	require.NoError(t, errRead)
+	require.NoError(t, errRead, "error reading")
 
 	e := objects.NewEntries(content)
 	entries := e.Parse()
-	writter := objects.ConvertToIWritter(entries)
+
+	writter := ConvertToIWritter(entries)
 
 	for _, element := range writter {
 		log.Print(element)

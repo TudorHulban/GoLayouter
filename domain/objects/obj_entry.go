@@ -3,9 +3,8 @@ package objects
 import (
 	"strings"
 
-	"github.com/TudorHulban/GoLayouter/helpers"
-	"github.com/TudorHulban/GoLayouter/interfaces"
-	"github.com/TudorHulban/GoLayouter/stack"
+	"github.com/TudorHulban/GoLayouter/app/helpers/helpers"
+	"github.com/TudorHulban/GoLayouter/app/helpers/stack"
 )
 
 type entry struct {
@@ -148,25 +147,4 @@ func (e *Entries) Parse() []string {
 	}
 
 	return res
-}
-
-func ConvertToIWritter(content []string) []interfaces.IWritter {
-	var writters []interfaces.IWritter
-
-	for _, line := range content {
-		if helpers.TypeofFile(helpers.GetFileName(line)) == "file" {
-			packageName := helpers.ParsePackage(helpers.GetFileName(line))
-			path := helpers.RemovePackageName(line)
-
-			writters = append(writters, File{Path: path, Content: packageName})
-
-			continue
-		}
-
-		if helpers.TypeofFile(helpers.GetFileName(line)) == "folder" {
-			writters = append(writters, Folder{Path: line})
-		}
-	}
-
-	return writters
 }

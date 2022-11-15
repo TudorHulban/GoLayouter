@@ -1,7 +1,6 @@
 package helpers
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -42,7 +41,7 @@ func TestTypeofFile(t *testing.T) {
 
 	for i := range got {
 		assert.Equal(t, TypeofFile(got[i]), want[i], "verify the type of file")
-		fmt.Println(got[i], "is a", want[i])
+		//fmt.Println(got[i], "is a", want[i])
 	}
 }
 

@@ -3,12 +3,20 @@ package objects
 import (
 	"os"
 
-	"github.com/TudorHulban/GoLayouter/helpers"
+	"github.com/TudorHulban/GoLayouter/app/helpers/helpers"
 )
 
 type File struct {
 	Path    string
 	Content string
+}
+
+func (f *File) SetPath(path string) {
+	(*f).Path = path
+}
+
+func (f *File) SetContent(content string) {
+	f.Content = content
 }
 
 func (f File) GetPath() string {

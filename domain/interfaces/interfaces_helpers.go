@@ -3,9 +3,11 @@ package interfaces
 import (
 	"bufio"
 	"os"
+
+	"github.com/TudorHulban/GoLayouter/app/helpers/helpers"
 )
 
-const _pathInput = "../test_cases/folder_c6"
+const _pathInput = "../../test_cases/folder_c6"
 
 // to evoid imported cycle
 func IRWritterReadFile(filePath string) ([]string, error) {
@@ -60,4 +62,33 @@ func DeletePaths(paths []IWritter) error {
 	}
 
 	return nil
+}
+
+func ConvertToIWritter(content []string) []IWritter {
+	var writters []IWritter
+
+	for _, line := range content {
+		if helpers.TypeofFile(helpers.GetFileName(line)) == "file" {
+			packageName := helpers.ParsePackage(helpers.GetFileName(line))
+			path := helpers.RemovePackageName(line)
+
+			file := new(IWritter)
+
+			(*file).SetPath(path)
+			(*file).SetContent(packageName)
+
+			writters = append(writters, *file)
+
+			continue
+		}
+
+		if helpers.TypeofFile(helpers.GetFileName(line)) == "folder" {
+			folder := new(IWritter)
+			(*folder).SetPath(line)
+
+			writters = append(writters, *folder)
+		}
+	}
+
+	return writters
 }
