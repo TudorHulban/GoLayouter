@@ -35,15 +35,15 @@ func TestWriteObjectsToFile(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.description, func(t *testing.T) {
-			content, errRe := helpers.ReadFile(tc.fileInput)
-			require.NoError(t, errRe, helpers.ClearFile(tc.fileOutput))
+			content, errRe := helpers.ReadFile("../" + tc.fileInput)
+			require.NoError(t, errRe, helpers.ClearFile("../"+tc.fileOutput))
 
 			e := NewEntries(content)
 			entries := e.Parse()
 
-			require.NoError(t, WriteToFile(entries, tc.fileOutput))
+			require.NoError(t, WriteToFile(entries, "../"+tc.fileOutput))
 
-			output, errRead := helpers.ReadFile(tc.fileOutput)
+			output, errRead := helpers.ReadFile("../" + tc.fileOutput)
 			require.NoError(t, errRead)
 
 			assert.Equal(t, output, entries, "should be equal")

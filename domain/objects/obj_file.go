@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"github.com/TudorHulban/GoLayouter/app/helpers/helpers"
+	"github.com/TudorHulban/GoLayouter/domain/interfaces"
 )
 
 type File struct {
@@ -11,8 +12,11 @@ type File struct {
 	Content string
 }
 
-func (f *File) SetPath(path string) {
-	(*f).Path = path
+var _ interfaces.IWritter = &File{}
+var _ interfaces.IFileOperations = &File{}
+
+func (f File) SetPath(path string) {
+	f.Path = path
 }
 
 func (f *File) SetContent(content string) {
@@ -23,7 +27,7 @@ func (f File) GetPath() string {
 	return f.Path
 }
 
-func (f File) CheckIfExists() error {
+func (f File) CheckIfPathExists() error {
 	return helpers.CheckIfPathExists(f.GetPath())
 }
 
