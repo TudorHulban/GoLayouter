@@ -1,10 +1,8 @@
 package interfaces
 
-type IWritter interface {
-	WriteToDisk() error
-}
-
 type IFileOperations interface {
+	WriteToDisk() error
+
 	CheckIfPathExists() error
 	DeletePath() error
 }

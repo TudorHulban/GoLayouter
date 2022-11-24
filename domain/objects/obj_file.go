@@ -12,7 +12,6 @@ type File struct {
 	Content string
 }
 
-var _ interfaces.IWritter = &File{}
 var _ interfaces.IFileOperations = &File{}
 
 func (f File) SetPath(path string) {

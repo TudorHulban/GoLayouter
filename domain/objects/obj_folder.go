@@ -11,7 +11,6 @@ type Folder struct {
 	Path string
 }
 
-var _ interfaces.IWritter = &Folder{}
 var _ interfaces.IFileOperations = &Folder{}
 
 func (f *Folder) SetPath(path string) {
@@ -29,8 +28,6 @@ func (f Folder) CheckIfPathExists() error {
 func (f Folder) GetPath() string {
 	return f.Path
 }
-
-//var _ interfaces.IWritter = &Folder{}
 
 func (f Folder) WriteToDisk() error {
 	err := os.Mkdir(f.Path, os.ModePerm)
