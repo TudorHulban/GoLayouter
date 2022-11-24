@@ -1,9 +1,7 @@
 package service
 
-import "github.com/TudorHulban/GoLayouter/domain/interfaces"
-
-func CheckPathsExists(paths []interfaces.IFileOperations) error {
-	for _, path := range paths {
+func (serv *Service) CheckPathsExists() error {
+	for _, path := range serv.paths {
 		errCheck := path.CheckIfPathExists()
 		if errCheck != nil {
 			return errCheck
@@ -13,9 +11,9 @@ func CheckPathsExists(paths []interfaces.IFileOperations) error {
 	return nil
 }
 
-func DeletePaths(paths []interfaces.IFileOperations) error {
-	for index := len(paths) - 1; index >= 0; index-- {
-		err := paths[index].DeletePath()
+func (serv *Service) DeletePaths() error {
+	for index := len(serv.paths) - 1; index >= 0; index-- {
+		err := serv.paths[index].DeletePath()
 		if err != nil {
 			return err
 		}

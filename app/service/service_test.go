@@ -12,14 +12,15 @@ import (
 
 const _pathInput = "../../test_cases/folder_c6"
 
-func TestConvertToIWritter(t *testing.T) {
+func TestConvertToIFileOperations(t *testing.T) {
 	content, errRead := helpers.ReadFile(_pathInput)
 	require.NoError(t, errRead, "error reading")
 
-	e := objects.NewEntries(content)
-	entries := e.Parse()
+	entries := objects.NewEntries(content).Parse()
 
-	writter := service.ConvertToIWritter(entries)
+	var serv Service
+
+	writter := serv.ConvertToIFileOperations(entries)
 
 	for _, element := range writter {
 		log.Print(element)
@@ -30,11 +31,11 @@ func TestWrite(t *testing.T) {
 	content, errRead := helpers.ReadFile(_pathInput)
 	require.NoError(t, errRead)
 
-	e := objects.NewEntries(content)
-	entries := e.Parse()
-	writter := service.ConvertToIWritter(entries)
+	entries := objects.NewEntries(content).Parse()
 
-	require.NoError(t, service.WriteToDisk(writter), "writing error")
-	require.NoError(t, CheckPathsExists(writter), "checking error")
-	require.NoError(t, DeletePaths(writter), "deleting error")
+	serv := NewService(entries)
+
+	require.NoError(t, serv.WriteToDisk(), "writing error")
+	require.NoError(t, serv.CheckPathsExists(), "checking error")
+	require.NoError(t, serv.DeletePaths(), "deleting error")
 }
