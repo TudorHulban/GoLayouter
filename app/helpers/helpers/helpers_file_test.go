@@ -68,7 +68,7 @@ func TestClearFile(t *testing.T) {
 	assert.Equal(t, nil, ClearFile(_input), "should be empty")
 }
 
-func TestWriteLineInFile(t *testing.T) {
+func TestWriteTextInFile(t *testing.T) {
 	text := []string{"READ ME ! "}
 
 	errClearFile := ClearFile(_output)
@@ -89,4 +89,75 @@ func TestFileExists(t *testing.T) {
 
 	err2 := CheckIfPathExists("/var")
 	require.NoError(t, err2, err2)
+}
+
+func TestGetCommand(t *testing.T) {
+	testCases := []struct {
+		description string
+		input       string
+		output      string
+	}{
+		{"package", "# package", "package"},
+		{"path", "! home/path", "home/path"},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.description, func(t *testing.T) {
+			assert.Equal(t, tc.output, GetCommand(tc.input))
+		})
+	}
+}
+
+func TestIsTestFile(t *testing.T) {
+	assert.Equal(t, true, IsTestFile("t"))
+	assert.NotEqual(t, true, IsTestFile("something"))
+}
+
+func TestCreateGolangTestFile(t *testing.T) {
+	testCases := []struct {
+		description string
+		input       string
+		output      string
+	}{
+		{"1", "main.go", "main_test.go"},
+		{"2", "functions.go", "functions_test.go"},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.description, func(t *testing.T) {
+			assert.Equal(t, tc.output, CreateGolangTestFile(tc.input))
+		})
+	}
+}
+
+func TestGetFileName(t *testing.T) {
+	testCases := []struct {
+		description string
+		input       string
+		output      string
+	}{
+		{"1", "home/path/file", "file"},
+		{"2", "home/file", "file"},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.description, func(t *testing.T) {
+			assert.Equal(t, tc.output, GetFileName(tc.input))
+		})
+	}
+}
+
+func TestCheckIfPathExists(t *testing.T) {
+	require.NoError(t, CheckIfPathExists(_input))
+	require.NoError(t, CheckIfPathExists(_output))
+	require.Error(t, CheckIfPathExists("invalid-path"))
+}
+
+func TestConvertToFiles(t *testing.T) {
+	input := "file.go main.go head.go"
+	packageName := "t"
+
+	have := []string{"file.go", "file_test.go", "main.go", "main_test.go", "head.go", "head_test.go"}
+
+	assert.Equal(t, ConvertToFiles(input, packageName), have)
 }
