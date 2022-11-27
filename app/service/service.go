@@ -1,7 +1,8 @@
 package service
 
 import (
-	"log"
+	"errors"
+	"path"
 
 	"github.com/TudorHulban/GoLayouter/app/helpers/helpers"
 	"github.com/TudorHulban/GoLayouter/domain/interfaces"
@@ -12,12 +13,17 @@ type Service struct {
 	paths []interfaces.IFileOperations
 }
 
-func NewService(content []string) *Service {
+func NewService(content []string) (*Service, error) {
+	if len(content) == 0 {
+		return nil, errors.New("parsed content is empty")
+	}
+
 	var res []interfaces.IFileOperations
 
 	for _, line := range content {
-		if helpers.TypeofFile(helpers.GetFileName(line)) == "file" {
-			packageName := helpers.ParsePackage(helpers.GetFileName(line))
+		_, fileName := path.Split(line)
+		if helpers.TypeofFile(fileName) == "file" {
+			packageName := helpers.ParsePackage(fileName)
 			path := helpers.RemovePackageName(line)
 
 			res = append(res, &objects.File{
@@ -27,22 +33,20 @@ func NewService(content []string) *Service {
 
 			continue
 		}
-
-		if helpers.TypeofFile(helpers.GetFileName(line)) == "folder" {
+		_, folderName := path.Split(line)
+		if helpers.TypeofFile(folderName) == "folder" {
 			res = append(res, &objects.Folder{Path: line})
 		}
 	}
 
 	return &Service{
 		paths: res,
-	}
+	}, nil
 }
 
 func (serv *Service) WriteToDisk() error {
 	for _, path := range serv.paths {
-		log.Print(path)
-		err := path.WriteToDisk()
-		if err != nil {
+		if err := path.WriteToDisk(); err != nil {
 			return err
 		}
 	}
@@ -51,23 +55,26 @@ func (serv *Service) WriteToDisk() error {
 }
 
 func (Service) ConvertToIFileOperations(content []string) []interfaces.IFileOperations {
-	var res []interfaces.IFileOperations
+	res := make([]interfaces.IFileOperations, len(content), len(content))
 
-	for _, line := range content {
-		if helpers.TypeofFile(helpers.GetFileName(line)) == "file" {
-			packageName := helpers.ParsePackage(helpers.GetFileName(line))
+	for ix, line := range content {
+		_, fileName := path.Split(line)
+		if helpers.TypeofFile(fileName) == "file" {
+			packageName := helpers.ParsePackage(fileName)
 			path := helpers.RemovePackageName(line)
 
-			res = append(res, &objects.File{
+			res[ix] = &objects.File{
 				Path:    path,
 				Content: packageName,
-			})
+			}
 
 			continue
 		}
-
-		if helpers.TypeofFile(helpers.GetFileName(line)) == "folder" {
-			res = append(res, &objects.Folder{Path: line})
+		_, folderName := path.Split(line)
+		if helpers.TypeofFile(folderName) == "folder" {
+			res[ix] = &objects.File{
+				Path: line,
+			}
 		}
 	}
 

@@ -117,32 +117,25 @@ func TestCreateGolangTestFile(t *testing.T) {
 	testCases := []struct {
 		description string
 		input       string
-		output      string
+		checkResult func(string, error)
 	}{
-		{"1", "main.go", "main_test.go"},
-		{"2", "functions.go", "functions_test.go"},
+		{"1 happy path", "main.go", func(res string, err error) {
+			assert.NoError(t, err)
+			assert.Equal(t, "main_test.go", res)
+		}},
+		{"2", "functions.go", func(res string, err error) {
+			assert.NoError(t, err)
+			assert.Equal(t, "functions_test.go", res)
+		}},
+		{"3 typo", "../main..go", func(res string, err error) {
+			assert.NoError(t, err)
+			assert.Equal(t, "../main_test.go", res)
+		}},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.description, func(t *testing.T) {
-			assert.Equal(t, tc.output, CreateGolangTestFile(tc.input))
-		})
-	}
-}
-
-func TestGetFileName(t *testing.T) {
-	testCases := []struct {
-		description string
-		input       string
-		output      string
-	}{
-		{"1", "home/path/file", "file"},
-		{"2", "home/file", "file"},
-	}
-
-	for _, tc := range testCases {
-		t.Run(tc.description, func(t *testing.T) {
-			assert.Equal(t, tc.output, GetFileName(tc.input))
+			tc.checkResult(CreateGolangTestFile(tc.input))
 		})
 	}
 }
@@ -157,7 +150,7 @@ func TestConvertToFiles(t *testing.T) {
 	input := "file.go main.go head.go"
 	packageName := "t"
 
-	have := []string{"file.go", "file_test.go", "main.go", "main_test.go", "head.go", "head_test.go"}
+	want := []string{"file.go", "file_test.go", "main.go", "main_test.go", "head.go", "head_test.go"}
 
-	assert.Equal(t, ConvertToFiles(input, packageName), have)
+	assert.Equal(t, ConvertToFiles(input, packageName), want)
 }

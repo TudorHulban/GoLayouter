@@ -5,19 +5,29 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path"
 	"strings"
 )
 
-func GetCommand(line string) string {
-	return line[2:]
+// GetCommand
+func GetCommand(text string) string {
+	return text[2:]
 }
 
 func IsTestFile(text string) bool {
 	return text == "t"
 }
 
-func CreateGolangTestFile(text string) string {
-	return text[:len(text)-3] + "_test.go"
+// ../main.go
+func CreateGolangTestFile(text string) (string, error) {
+	path, fileName := path.Split(text)
+
+	pos := strings.Index(fileName, ".")
+	if pos == -1 {
+		return "", errors.New("passed is not a file path")
+	}
+
+	return path + fileName[:pos] + "_test.go", nil
 }
 
 func ConvertToFiles(text, packageName string) []string {
@@ -26,15 +36,17 @@ func ConvertToFiles(text, packageName string) []string {
 
 	for _, file := range files {
 		fileTrimmed := strings.TrimLeft(file, " ")
+		if len(fileTrimmed) == 0 {
+			continue
+		}
 
 		if fileTrimmed != "" {
-			if IsTestFile(packageName) {
-				res = append(res, fileTrimmed, CreateGolangTestFile(fileTrimmed))
-
+			if !IsTestFile(packageName) {
 				continue
 			}
 
-			res = append(res, fileTrimmed)
+			str, _ := CreateGolangTestFile(fileTrimmed)
+			res = append(res, fileTrimmed, str)
 		}
 	}
 
@@ -57,24 +69,6 @@ func ParsePackage(text string) string {
 	}
 
 	return text[start:stop]
-}
-
-func GetFileName(path string) string {
-	var res string
-	var found bool
-
-	for ix, character := range path {
-		if character == '/' {
-			res = path[ix+1:]
-			found = true
-		}
-	}
-
-	if !found {
-		res = path
-	}
-
-	return res
 }
 
 func RemovePackageName(text string) string {

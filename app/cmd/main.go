@@ -1,7 +1,7 @@
 package main
 
 import (
-	"log"
+	"fmt"
 	"os"
 
 	"github.com/TudorHulban/GoLayouter/app/helpers/helpers"
@@ -9,19 +9,31 @@ import (
 	"github.com/TudorHulban/GoLayouter/domain/objects"
 )
 
+// TODO merge branch
+// golang cli
+// yaml config
+// github actions
+//
+
 func main() {
 	fileSource := os.Args[1]
 
-	content, err := helpers.ReadFile(fileSource)
-	if err != nil {
-		log.Print(err)
+	content, errRead := helpers.ReadFile(fileSource)
+	if errRead != nil {
+		fmt.Print(errRead)
+		os.Exit(1)
 	}
 
 	entries := objects.NewEntries(content).Parse()
-	serv := service.NewService(entries)
+	serv, errNewService := service.NewService(entries)
+	if errNewService != nil {
+		fmt.Print(errNewService)
+		os.Exit(2)
+	}
 
-	err = serv.WriteToDisk()
-	if err != nil {
-		log.Print(err)
+	errWrite := serv.WriteToDisk()
+	if errWrite != nil {
+		fmt.Print(errWrite)
+		os.Exit(3)
 	}
 }

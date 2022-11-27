@@ -33,7 +33,8 @@ func TestWrite(t *testing.T) {
 
 	entries := objects.NewEntries(content).Parse()
 
-	serv := NewService(entries)
+	serv, errNewService := NewService(entries)
+	require.NoError(t, errNewService)
 
 	require.NoError(t, serv.WriteToDisk(), "writing error")
 	require.NoError(t, serv.CheckPathsExists(), "checking error")
