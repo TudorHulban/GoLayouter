@@ -14,14 +14,6 @@ type File struct {
 
 var _ interfaces.IFileOperations = &File{}
 
-func (f File) SetPath(path string) {
-	f.Path = path
-}
-
-func (f *File) SetContent(content string) {
-	f.Content = content
-}
-
 func (f File) GetPath() string {
 	return f.Path
 }

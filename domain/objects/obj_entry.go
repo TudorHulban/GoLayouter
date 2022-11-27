@@ -90,7 +90,6 @@ func (e *Entries) Parse() []string {
 				file = file + "(" + pack.(string) + ")"
 				line := stackFolders.String() + "/" + file
 				res = append(res, line)
-
 			}
 
 			continue

@@ -1,6 +1,7 @@
 package objects
 
 import (
+	"path"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -9,33 +10,31 @@ import (
 	"github.com/TudorHulban/GoLayouter/app/helpers/helpers"
 )
 
-func TestCreateFile(t *testing.T) {
-	fileName := "file.go"
+const _fileName = "file.go"
 
+func TestCreateFile(t *testing.T) {
 	f := &File{
-		Path:    fileName,
+		Path:    _fileName,
 		Content: "content",
 	}
 
-	require.NoError(t, f.WriteToDisk(), helpers.CheckIfPathExists(fileName))
+	require.NoError(t, f.WriteToDisk(), helpers.CheckIfPathExists(_fileName))
 
-	content, errRead := helpers.ReadFile(fileName)
+	content, errRead := helpers.ReadFile(_fileName)
 
 	require.NoError(t, errRead)
 	assert.Equal(t, content[0], f.Content)
 
-	require.NoError(t, RemoveFile(fileName))
+	require.NoError(t, RemoveFile(_fileName))
 }
 
 func TestRemoveFile(t *testing.T) {
-	fileName := "file.go"
-
 	f := &File{
-		Path:    fileName,
+		Path:    _fileName,
 		Content: "",
 	}
-	require.NoError(t, f.WriteToDisk(), RemoveFile(fileName))
-	require.Error(t, helpers.CheckIfPathExists(fileName))
+	require.NoError(t, f.WriteToDisk(), RemoveFile(_fileName))
+	require.Error(t, helpers.CheckIfPathExists(_fileName))
 }
 
 func TestGetFile(t *testing.T) {
@@ -51,7 +50,8 @@ func TestGetFile(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.description, func(t *testing.T) {
-			assert.Equal(t, tc.output, helpers.GetFileName(tc.input))
+			_, fileName := path.Split(tc.input)
+			assert.Equal(t, tc.output, fileName)
 		})
 	}
 }
