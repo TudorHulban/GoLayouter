@@ -36,12 +36,21 @@ func TestParsePackage(t *testing.T) {
 }
 
 func TestTypeofFile(t *testing.T) {
-	got := []string{"! .", "# package main", "file.go", "folder"}
-	want := []string{"path", "pack", "file", "folder"}
+	testCases := []struct {
+		description string
+		input       string
+		output      string
+	}{
+		{"text followed after an exlamation mark", "! .", "path"},
+		{"text followed after #", "# package", "pack"},
+		{"text that contains '.' ", "file.go", "file"},
+		{"text without special characters ", "directory", "folder"},
+	}
 
-	for i := range got {
-		assert.Equal(t, TypeofFile(got[i]), want[i], "verify the type of file")
-		//fmt.Println(got[i], "is a", want[i])
+	for _, tc := range testCases {
+		t.Run(tc.description, func(t *testing.T) {
+			assert.Equal(t, tc.output, TypeofFile(tc.input))
+		})
 	}
 }
 
@@ -147,10 +156,19 @@ func TestCheckIfPathExists(t *testing.T) {
 }
 
 func TestConvertToFiles(t *testing.T) {
-	input := "file.go main.go head.go"
-	packageName := "t"
+	testCases := []struct {
+		description      string
+		inputLine        string
+		inputPackageName string
+		output           []string
+	}{
+		{"converting test files", "file.go main.go head.go", "t", []string{"file.go", "file_test.go", "main.go", "main_test.go", "head.go", "head_test.go"}},
+		{"converting no test files", "file.go main.go head.go", "package something", []string{"file.go", "main.go", "head.go"}},
+	}
 
-	want := []string{"file.go", "file_test.go", "main.go", "main_test.go", "head.go", "head_test.go"}
-
-	assert.Equal(t, ConvertToFiles(input, packageName), want)
+	for _, tc := range testCases {
+		t.Run(tc.description, func(t *testing.T) {
+			assert.Equal(t, tc.output, ConvertToFiles(tc.inputLine, tc.inputPackageName))
+		})
+	}
 }

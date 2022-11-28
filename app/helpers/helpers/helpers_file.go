@@ -9,7 +9,8 @@ import (
 	"strings"
 )
 
-// GetCommand
+// GetCommand after the separator and space
+// Example: input:(# package testing) -> output: (package testing)
 func GetCommand(text string) string {
 	return text[2:]
 }
@@ -18,7 +19,6 @@ func IsTestFile(text string) bool {
 	return text == "t"
 }
 
-// ../main.go
 func CreateGolangTestFile(text string) (string, error) {
 	path, fileName := path.Split(text)
 
@@ -31,23 +31,29 @@ func CreateGolangTestFile(text string) (string, error) {
 }
 
 func ConvertToFiles(text, packageName string) []string {
-	var res []string
 	files := strings.Split(text, " ")
+	var res []string
 
 	for _, file := range files {
 		fileTrimmed := strings.TrimLeft(file, " ")
+
+		// guardian
 		if len(fileTrimmed) == 0 {
+
 			continue
 		}
 
-		if fileTrimmed != "" {
-			if !IsTestFile(packageName) {
-				continue
+		if IsTestFile(packageName) {
+			testFile, err := CreateGolangTestFile(fileTrimmed)
+
+			if err == nil {
+				res = append(res, fileTrimmed, testFile)
 			}
 
-			str, _ := CreateGolangTestFile(fileTrimmed)
-			res = append(res, fileTrimmed, str)
+			continue
 		}
+
+		res = append(res, fileTrimmed)
 	}
 
 	return res
