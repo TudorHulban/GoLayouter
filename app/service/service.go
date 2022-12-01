@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"fmt"
 	"path"
 
 	"github.com/TudorHulban/GoLayouter/app/helpers/helpers"
@@ -47,7 +48,8 @@ func NewService(content []string) (*Service, error) {
 func (serv *Service) WriteToDisk() error {
 	for _, path := range serv.paths {
 		if err := path.WriteToDisk(); err != nil {
-			return err
+
+			return fmt.Errorf("error : %w", err)
 		}
 	}
 

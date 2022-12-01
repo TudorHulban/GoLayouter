@@ -1,8 +1,8 @@
-/home/apetroaei/ram/program
-/home/apetroaei/ram/program/helpers1
-/home/apetroaei/ram/program/helpers1/helpers.go(package helpers)
-/home/apetroaei/ram/program/helpers1/helpers_file.go(package helpers)
-/home/apetroaei/ram/program/helpers1/helpers_file_test.go(package helpers)
+../../temporary_files/program
+../../temporary_files/program/helpers1
+../../temporary_files/program/helpers1/helpers.go(package helpers)
+../../temporary_files/program/helpers1/helpers_file.go(package helpers)
+../../temporary_files/program/helpers1/helpers_file_test.go(package helpers)
 objects1
 objects1/obj_folder.go(package objects)
 objects1/obj_entry.go(package objects)

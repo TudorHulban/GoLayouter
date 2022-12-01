@@ -1,0 +1,13 @@
+main/
+main/test/
+in test sa ai o functie
+
+func TestXXX()...
+
+go mod init test 
+
+go sum
+
+makefile
+
+yaml golangcli

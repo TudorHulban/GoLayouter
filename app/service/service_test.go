@@ -11,6 +11,7 @@ import (
 )
 
 const _pathInput = "../../test_cases/folder_c6"
+const _temporaryFolder = "../../temporary_files"
 
 func TestConvertToIFileOperations(t *testing.T) {
 	content, errRead := helpers.ReadFile(_pathInput)
@@ -36,7 +37,9 @@ func TestWrite(t *testing.T) {
 	serv, errNewService := NewService(entries)
 	require.NoError(t, errNewService)
 
+	require.NoError(t, helpers.CreateFolder(_temporaryFolder))
+
 	require.NoError(t, serv.WriteToDisk(), "writing error")
 	require.NoError(t, serv.CheckPathsExists(), "checking error")
-	require.NoError(t, serv.DeletePaths(), "deleting error")
+	//require.NoError(t, serv.DeletePaths(), "deleting error")
 }

@@ -8,11 +8,22 @@ import (
 )
 
 type File struct {
-	Path    string
+	Path    string // extracted from initial file the path where the file will be created
 	Content string
 }
 
 var _ interfaces.IFileOperations = &File{}
+
+func (f *File) ParseTheRoot() error {
+	rootPath, errRootPath := os.Getwd()
+	if errRootPath != nil {
+		return errRootPath
+	}
+
+	f.Path = rootPath + "/" + f.Path
+
+	return nil
+}
 
 func (f File) GetPath() string {
 	return f.Path
@@ -27,17 +38,24 @@ func (f File) DeletePath() error {
 }
 
 func (f File) WriteToDisk() error {
-	emptyFile, err := os.Create(f.Path)
-	if err != nil {
-		return err
+	var emptyFile *os.File
+	if helpers.CheckIfPathExists(f.Path) != nil {
+		var errCreate error
+
+		emptyFile, errCreate = os.Create(f.Path)
+		if errCreate != nil {
+			return errCreate
+		}
+
+		errWrite := helpers.WriteTextInFile(f.Content, f.Path)
+		if errWrite != nil {
+			return errWrite
+		}
+
+		return emptyFile.Close()
 	}
 
-	err = helpers.WriteTextInFile(f.Content, f.Path)
-	if err != nil {
-		return err
-	}
-
-	return emptyFile.Close()
+	return nil
 }
 
 func RemoveFile(path string) error {
