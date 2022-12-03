@@ -128,15 +128,15 @@ func (e *Entries) Parse() []string {
 		}
 
 		for entry.indent < stackIndents.Peek().(int) && len(stackIndents) > 1 {
+			stackFolders.Pop()
+			stackIndents.Pop()
+
 			if entry.indent == stackIndents.Peek().(int) {
 				stackFolders.Pop()
 				stackPackages.Pop()
 
 				break
 			}
-
-			stackFolders.Pop()
-			stackIndents.Pop()
 		}
 
 		stackFolders.Push(entry.folderInfo)

@@ -38,6 +38,7 @@ func TestWrite(t *testing.T) {
 	require.NoError(t, errNewService)
 
 	require.NoError(t, helpers.CreateFolder(_temporaryFolder))
+	require.NoError(t, helpers.CheckIfPathExists(_temporaryFolder))
 
 	require.NoError(t, serv.WriteToDisk(), "writing error")
 	require.NoError(t, serv.CheckPathsExists(), "checking error")
