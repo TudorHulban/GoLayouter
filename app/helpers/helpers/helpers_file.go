@@ -19,18 +19,6 @@ func IsTestFile(text string) bool {
 	return text == "t"
 }
 
-func CreateFile(path string) (*os.File, error) {
-	var file *os.File
-	if CheckIfPathExists(path) != nil {
-		file, errCreate := os.Create(path)
-		if errCreate != nil {
-			return file, errCreate
-		}
-	}
-
-	return file, nil
-}
-
 func CreateFolder(path string) error {
 	if CheckIfPathExists(path) != nil {
 		errCreate := os.Mkdir(path, os.ModePerm)

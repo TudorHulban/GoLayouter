@@ -9,4 +9,4 @@ test: ## Run tests with check race and coverage
 
 .PHONY: benchmark
 benchmark:
-	@go test -bench=.
+	@go test  ./... -bench=.

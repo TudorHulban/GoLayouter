@@ -9,6 +9,8 @@ import (
 	"github.com/TudorHulban/GoLayouter/app/helpers/helpers"
 )
 
+const _TestCases = "../../test_cases/"
+
 func WriteToFile(entries []string, output string) error {
 	for _, file := range entries {
 		if err := helpers.WriteTextInFile(file, output); err != nil {
@@ -36,11 +38,11 @@ func TestWriteObjectsToFile(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.description, func(t *testing.T) {
-			content, errRe := helpers.ReadFile("../../test_cases/" + tc.fileInput)
+			content, errRe := helpers.ReadFile(_TestCases + tc.fileInput)
 			require.NoError(t, errRe)
 			entries := NewEntries(content).Parse()
 
-			output, errRead := helpers.ReadFile("../../test_cases/" + tc.fileOutput)
+			output, errRead := helpers.ReadFile(_TestCases + tc.fileOutput)
 			require.NoError(t, errRead)
 
 			assert.Equal(t, output, entries, "should be equal")

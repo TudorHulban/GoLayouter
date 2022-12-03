@@ -11,16 +11,12 @@ type Folder struct {
 
 var _ interfaces.IFileOperations = &Folder{}
 
-func (f Folder) GetPath() string {
-	return f.Path
-}
-
 func (f Folder) DeletePath() error {
-	return RemoveFile(f.GetPath())
+	return RemoveFile(f.Path)
 }
 
 func (f Folder) CheckIfPathExists() error {
-	return helpers.CheckIfPathExists(f.GetPath())
+	return helpers.CheckIfPathExists(f.Path)
 }
 
 func (f Folder) WriteToDisk() error {

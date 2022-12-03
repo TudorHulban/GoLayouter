@@ -25,16 +25,12 @@ func (f *File) ParseTheRoot() error {
 	return nil
 }
 
-func (f File) GetPath() string {
-	return f.Path
-}
-
 func (f File) CheckIfPathExists() error {
-	return helpers.CheckIfPathExists(f.GetPath())
+	return helpers.CheckIfPathExists(f.Path)
 }
 
 func (f File) DeletePath() error {
-	return RemoveFile(f.GetPath())
+	return RemoveFile(f.Path)
 }
 
 func (f File) WriteToDisk() error {
