@@ -5,8 +5,70 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path"
 	"strings"
 )
+
+// GetCommand after the separator and space
+// Example: input:(# package testing) -> output: (package testing)
+func GetCommand(text string) string {
+	return text[2:]
+}
+
+func IsTestFile(text string) bool {
+	return text == "t"
+}
+
+func CreateFolder(path string) error {
+	if CheckIfPathExists(path) != nil {
+		errCreate := os.Mkdir(path, os.ModePerm)
+		if errCreate != nil {
+			return errCreate
+		}
+	}
+
+	return nil
+}
+
+func CreateGolangTestFile(text string) (string, error) {
+	path, fileName := path.Split(text)
+
+	pos := strings.Index(fileName, ".")
+	if pos == -1 {
+		return "", errors.New("passed is not a file path")
+	}
+
+	return path + fileName[:pos] + "_test.go", nil
+}
+
+func ConvertToFiles(text, packageName string) []string {
+	files := strings.Split(text, " ")
+	var res []string
+
+	for _, file := range files {
+		fileTrimmed := strings.TrimLeft(file, " ")
+
+		// guardian
+		if len(fileTrimmed) == 0 {
+
+			continue
+		}
+
+		if IsTestFile(packageName) {
+			testFile, err := CreateGolangTestFile(fileTrimmed)
+
+			if err == nil {
+				res = append(res, fileTrimmed, testFile)
+			}
+
+			continue
+		}
+
+		res = append(res, fileTrimmed)
+	}
+
+	return res
+}
 
 func ParsePackage(text string) string {
 	var start, stop int
@@ -82,7 +144,7 @@ func ReadFile(filePath string) ([]string, error) {
 	return res, errClo
 }
 
-func CheckIfFileExists(path string) error {
+func CheckIfPathExists(path string) error {
 	_, errStat := os.Stat(path)
 	if errStat == nil {
 		return nil

@@ -1,3 +1,4 @@
 .idea
-helpers/helpers.in
-helpers/helpers.out
+app/helpers/helpers/helpers.in
+app/helpers/helpers/helpers.out
+textfile

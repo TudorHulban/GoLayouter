@@ -1,12 +1,10 @@
 package objects
 
 import (
-	"log"
 	"strings"
 
-	"github.com/TudorHulban/GoLayouter/helpers"
-	"github.com/TudorHulban/GoLayouter/interfaces"
-	"github.com/TudorHulban/GoLayouter/stack"
+	"github.com/TudorHulban/GoLayouter/app/helpers/helpers"
+	"github.com/TudorHulban/GoLayouter/app/helpers/stack"
 )
 
 type entry struct {
@@ -65,7 +63,7 @@ func (e *Entries) Parse() []string {
 
 		if helpers.TypeofFile(entry.folderInfo) == "pack" {
 			stackPackages.Push(helpers.GetCommand(entry.folderInfo))
-			log.Print(stackPackages)
+
 			continue
 		}
 
@@ -92,7 +90,6 @@ func (e *Entries) Parse() []string {
 				file = file + "(" + pack.(string) + ")"
 				line := stackFolders.String() + "/" + file
 				res = append(res, line)
-
 			}
 
 			continue
@@ -131,15 +128,15 @@ func (e *Entries) Parse() []string {
 		}
 
 		for entry.indent < stackIndents.Peek().(int) && len(stackIndents) > 1 {
+			stackFolders.Pop()
+			stackIndents.Pop()
+
 			if entry.indent == stackIndents.Peek().(int) {
 				stackFolders.Pop()
 				stackPackages.Pop()
 
 				break
 			}
-
-			stackFolders.Pop()
-			stackIndents.Pop()
 		}
 
 		stackFolders.Push(entry.folderInfo)
@@ -149,35 +146,4 @@ func (e *Entries) Parse() []string {
 	}
 
 	return res
-}
-
-func ConvertToIWritter(content []string) []interfaces.IWritter {
-	var writters []interfaces.IWritter
-
-	for _, line := range content {
-		if helpers.TypeofFile(helpers.GetFileName(line)) == "file" {
-			packageName := helpers.ParsePackage(helpers.GetFileName(line))
-			path := helpers.RemovePackageName(line)
-
-			writters = append(writters, File{Path: path, Content: packageName})
-
-			continue
-		}
-
-		if helpers.TypeofFile(helpers.GetFileName(line)) == "folder" {
-			writters = append(writters, Folder{Path: line})
-		}
-	}
-
-	return writters
-}
-
-func WriteToFile(entries []string, output string) error {
-	for _, file := range entries {
-		if err := helpers.WriteTextInFile(file, output); err != nil {
-			return err
-		}
-	}
-
-	return nil
 }
