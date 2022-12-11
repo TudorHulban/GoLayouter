@@ -1,6 +1,8 @@
 package objects
 
 import (
+	"os"
+
 	"github.com/TudorHulban/GoLayouter/app/helpers/helpers"
 	"github.com/TudorHulban/GoLayouter/domain/interfaces"
 )
@@ -12,7 +14,7 @@ type Folder struct {
 var _ interfaces.IFileOperations = &Folder{}
 
 func (f Folder) DeletePath() error {
-	return RemoveFile(f.Path)
+	return os.Remove(f.Path)
 }
 
 func (f Folder) CheckIfPathExists() error {
@@ -21,4 +23,15 @@ func (f Folder) CheckIfPathExists() error {
 
 func (f Folder) WriteToDisk() error {
 	return helpers.CreateFolder(f.Path)
+}
+
+func (f *Folder) ChangeDirectory(newPath string) error {
+	errPathExists := helpers.CheckIfPathExists(newPath)
+	if errPathExists != nil {
+		return errPathExists
+	}
+
+	f.Path = newPath + "/" + f.Path
+
+	return nil
 }

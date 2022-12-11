@@ -9,7 +9,7 @@ import (
 	"github.com/TudorHulban/GoLayouter/domain/objects"
 )
 
-// TODO merge branch
+// TODO: merge branch
 // golang cli
 // yaml config
 // github actions

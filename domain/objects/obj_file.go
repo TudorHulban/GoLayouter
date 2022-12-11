@@ -14,17 +14,6 @@ type File struct {
 
 var _ interfaces.IFileOperations = &File{}
 
-func (f *File) ParseTheRoot() error {
-	rootPath, errRootPath := os.Getwd()
-	if errRootPath != nil {
-		return errRootPath
-	}
-
-	f.Path = rootPath + "/" + f.Path
-
-	return nil
-}
-
 func (f File) CheckIfPathExists() error {
 	return helpers.CheckIfPathExists(f.Path)
 }
@@ -56,4 +45,15 @@ func (f File) WriteToDisk() error {
 
 func RemoveFile(path string) error {
 	return os.Remove(helpers.RemovePackageName(path))
+}
+
+func (f *File) ChangeDirectory(newPath string) error {
+	errPathExists := helpers.CheckIfPathExists(newPath)
+	if errPathExists != nil {
+		return errPathExists
+	}
+
+	f.Path = newPath + "/" + f.Path
+
+	return nil
 }
