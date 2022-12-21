@@ -1,0 +1,8 @@
+{{- define "main"}}
+package main
+
+func main(){
+
+}
+
+{{- end}}

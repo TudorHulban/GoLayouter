@@ -1,0 +1,11 @@
+{{define "test"}}
+package {{.Package}}
+
+import(
+	"testing"
+)
+
+func Test{{.FileName}}(t *testing.T){
+}
+
+{{end}}
