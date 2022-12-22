@@ -16,7 +16,7 @@ const (
 var _renderFuncs = map[string]func(io.Writer, any) error{
 	"main":        renderMain,
 	"test":        renderTest,
-	"object":      renderTest,
+	"object":      renderObject,
 	"tableDriven": renderTableDriven,
 }
 

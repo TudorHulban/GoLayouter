@@ -122,6 +122,18 @@ func TypeofFile(fileName string) string {
 	return "folder"
 }
 
+func KindofFile(fileName string) string {
+	if strings.Contains(fileName, "obj") {
+		return "object"
+	}
+
+	if strings.Contains(fileName, "test") {
+		return "test"
+	}
+
+	return "folder"
+}
+
 // ReadFile  is a helper reading file contents to a slice.
 func ReadFile(filePath string) ([]string, error) {
 	fileHandler, errOp := os.Open(filePath)

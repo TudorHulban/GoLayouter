@@ -5,6 +5,7 @@ import (
 
 	"github.com/TudorHulban/GoLayouter/app/helpers/helpers"
 	"github.com/TudorHulban/GoLayouter/app/helpers/stack"
+	"github.com/TudorHulban/GoLayouter/domain/interfaces"
 )
 
 type entry struct {
@@ -143,6 +144,161 @@ func (e *Entries) Parse() []string {
 		stackIndents.Push(entry.indent)
 
 		res = append(res, stackFolders.String())
+	}
+
+	return res
+}
+
+type item struct {
+	// idk if path works
+	// my idea was at that path
+	// we find either a folder or a different kind of file
+	path interfaces.IFileOperations
+
+	kind string
+}
+
+func (e *Entries) Parse2() []item {
+	var res []item
+
+	var stackFolders stack.Stack
+	var stackIndents stack.Stack
+	var stackPackages stack.Stack
+
+	for ix, entry := range *e {
+		if helpers.TypeofFile(entry.folderInfo) == "path" {
+			stackFolders = nil
+			stackIndents = nil
+			stackPackages = nil
+
+			if helpers.GetCommand(entry.folderInfo) != "." {
+				stackFolders.Push(helpers.GetCommand(entry.folderInfo))
+
+				res = append(res, item{
+					path: &Folder{
+						Path: stackFolders.String(),
+					},
+					kind: helpers.KindofFile(entry.folderInfo),
+				})
+
+				stackIndents.Push(-1)
+
+				continue
+			}
+
+			stackIndents.Push(entry.indent)
+
+			continue
+		}
+
+		if helpers.TypeofFile(entry.folderInfo) == "pack" {
+			stackPackages.Push(helpers.GetCommand(entry.folderInfo))
+
+			continue
+		}
+
+		if helpers.TypeofFile(entry.folderInfo) == "file" {
+			pack := stackPackages.Peek()
+
+			if stackPackages.IsEmpty() {
+				stackPackages.Push(_defaultPackage)
+
+				pack = _defaultPackage
+			}
+
+			if stackPackages.Peek() == "t" {
+				stackPackages.Pop()
+
+				pack = stackPackages.Peek().(string)
+
+				stackPackages.Push("t")
+			}
+
+			files := helpers.ConvertToFiles(entry.folderInfo, stackPackages.Peek().(string))
+
+			for _, file := range files {
+				file = file + "(" + pack.(string) + ")"
+				line := stackFolders.String() + "/" + file
+
+				res = append(res, item{
+					path: &Folder{
+						Path: line,
+					},
+					kind: helpers.KindofFile(entry.folderInfo),
+				})
+
+			}
+
+			continue
+		}
+
+		if ix == 0 {
+			stackFolders.Push(entry.folderInfo)
+			stackIndents.Push(0)
+
+			res = append(res, item{
+				path: &Folder{
+					Path: stackFolders.String(),
+				},
+				kind: helpers.KindofFile(entry.folderInfo),
+			})
+
+			continue
+		}
+
+		if stackIndents.Peek().(int) < 0 {
+			res = res[:len(res)-1]
+		}
+
+		if entry.indent > stackIndents.Peek().(int) {
+			stackFolders.Push(entry.folderInfo)
+			stackIndents.Push(entry.indent)
+
+			res = append(res, item{
+				path: &Folder{
+					Path: stackFolders.String(),
+				},
+				kind: helpers.KindofFile(entry.folderInfo),
+			})
+
+			continue
+		}
+
+		if entry.indent == stackIndents.Peek().(int) {
+			stackFolders.Pop()
+			stackFolders.Push(entry.folderInfo)
+			stackIndents.Push(entry.indent)
+
+			res = append(res, item{
+				path: &Folder{
+					Path: stackFolders.String(),
+				},
+				kind: helpers.KindofFile(entry.folderInfo),
+			})
+			continue
+		}
+
+		for entry.indent < stackIndents.Peek().(int) && len(stackIndents) > 1 {
+			stackFolders.Pop()
+			stackIndents.Pop()
+
+			if entry.indent == stackIndents.Peek().(int) {
+				stackFolders.Pop()
+				stackPackages.Pop()
+
+				break
+			}
+		}
+
+		stackFolders.Push(entry.folderInfo)
+		stackIndents.Push(entry.indent)
+
+		res = append(res, item{
+			path: &Folder{
+				Path: stackFolders.String(),
+			},
+			kind: helpers.KindofFile(entry.folderInfo),
+		})
 	}
 
 	return res

@@ -1,5 +1,6 @@
 package interfaces
 
+// TODO : remove interface/interfaces
 type IFileOperations interface {
 	WriteToDisk() error
 

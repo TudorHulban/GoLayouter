@@ -10,6 +10,8 @@ import (
 type File struct {
 	Path    string // extracted from initial file the path where the file will be created
 	Content string
+	Kind    string // TODO
+	// types of kind : main, test, object, none
 }
 
 var _ interfaces.IFileOperations = &File{}
