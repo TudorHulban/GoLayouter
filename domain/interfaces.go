@@ -1,4 +1,4 @@
-package interfaces
+package domain
 
 // TODO : remove interface/interfaces
 type IFileOperations interface {

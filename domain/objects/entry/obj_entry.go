@@ -3,8 +3,8 @@ package entry
 import (
 	"strings"
 
-	"github.com/TudorHulban/GoLayouter/app/helpers/stack"
-	"github.com/TudorHulban/GoLayouter/app/utils/helpers"
+	"github.com/TudorHulban/GoLayouter/app/helpers"
+	"github.com/TudorHulban/GoLayouter/app/stack"
 )
 
 type entry struct {

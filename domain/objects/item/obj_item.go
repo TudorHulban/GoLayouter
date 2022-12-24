@@ -1,20 +1,20 @@
 package item
 
 import (
-	"github.com/TudorHulban/GoLayouter/app/helpers/stack"
-	helpers "github.com/TudorHulban/GoLayouter/app/helpers/utils"
-	interfaces "github.com/TudorHulban/GoLayouter/domain/intefaces"
-	e "github.com/TudorHulban/GoLayouter/domain/objects/entry"
+	"github.com/TudorHulban/GoLayouter/app/helpers"
+	"github.com/TudorHulban/GoLayouter/app/stack"
+	"github.com/TudorHulban/GoLayouter/domain"
+	"github.com/TudorHulban/GoLayouter/domain/objects/folder"
 )
 
 type Item struct {
 	//object path
-	path interfaces.IFileOperations
+	path domain.IFileOperations
 
 	kind string
 }
 
-func (e *e.Entries) Parse2() []Item {
+func (e *Entries) Parse2() []Item {
 	var res []Item
 
 	var stackFolders stack.Stack
@@ -31,7 +31,7 @@ func (e *e.Entries) Parse2() []Item {
 				stackFolders.Push(helpers.GetCommand(entry.folderInfo))
 
 				res = append(res, Item{
-					path: &Folder{
+					path: &folder.Folder{
 						Path: stackFolders.String(),
 					},
 					kind: helpers.KindofFile(entry.folderInfo),

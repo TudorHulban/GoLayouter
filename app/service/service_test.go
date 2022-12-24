@@ -4,10 +4,9 @@ import (
 	"log"
 	"testing"
 
+	"github.com/TudorHulban/GoLayouter/app/helpers"
+	"github.com/TudorHulban/GoLayouter/domain/objects/entry"
 	"github.com/stretchr/testify/require"
-
-	"github.com/TudorHulban/GoLayouter/app/helpers/helpers"
-	"github.com/TudorHulban/GoLayouter/domain/objects"
 )
 
 const _pathInput = "../test_cases/folder_c6"
@@ -17,7 +16,7 @@ func TestConvertToIFileOperations(t *testing.T) {
 	content, errRead := helpers.ReadFile(_pathInput)
 	require.NoError(t, errRead, "error reading")
 
-	entries := objects.NewEntries(content).Parse()
+	entries := entry.NewEntries(content).Parse()
 
 	var serv Service
 
@@ -47,7 +46,7 @@ func TestWrite(t *testing.T) {
 			content, errRead := helpers.ReadFile("../../test_cases/" + tc.fileInput)
 			require.NoError(t, errRead)
 
-			entries := objects.NewEntries(content).Parse()
+			entries := entry.NewEntries(content).Parse()
 
 			serv, errNewService := NewService(entries)
 			require.NoError(t, errNewService)
@@ -74,7 +73,7 @@ func TestWrite(t *testing.T) {
 			content, errRead := helpers.ReadFile("../../test_cases/" + tc.fileInput)
 			require.NoError(t, errRead)
 
-			entries := objects.NewEntries(content).Parse()
+			entries := entry.NewEntries(content).Parse()
 
 			serv, errNewService := NewService(entries)
 			require.NoError(t, errNewService)

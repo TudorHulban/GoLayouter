@@ -6,13 +6,14 @@ import (
 	"io"
 	"path"
 
-	"github.com/TudorHulban/GoLayouter/app/helpers/helpers"
-	"github.com/TudorHulban/GoLayouter/domain/interfaces"
-	"github.com/TudorHulban/GoLayouter/domain/objects"
+	"github.com/TudorHulban/GoLayouter/app/helpers"
+	"github.com/TudorHulban/GoLayouter/domain"
+	"github.com/TudorHulban/GoLayouter/domain/objects/file"
+	"github.com/TudorHulban/GoLayouter/domain/objects/folder"
 )
 
 type Service struct {
-	paths       []interfaces.IFileOperations
+	paths       []domain.IFileOperations
 	renderFuncs map[string]func(io.Writer, any) error
 }
 
@@ -22,7 +23,7 @@ func NewService(content []string) (*Service, error) {
 		return nil, errors.New("parsed content is empty")
 	}
 
-	var res []interfaces.IFileOperations
+	var res []domain.IFileOperations
 	//TODO : move the for to
 	//: method named (serv Service)parse(content)
 	for _, line := range content {
@@ -31,7 +32,7 @@ func NewService(content []string) (*Service, error) {
 			packageName := helpers.ParsePackage(fileName)
 			path := helpers.RemovePackageName(line)
 
-			res = append(res, &objects.File{
+			res = append(res, &file.File{
 				Path:    path,
 				Content: packageName,
 			})
@@ -40,7 +41,7 @@ func NewService(content []string) (*Service, error) {
 		}
 		_, folderName := path.Split(line)
 		if helpers.TypeofFile(folderName) == "folder" {
-			res = append(res, &objects.Folder{Path: line})
+			res = append(res, &folder.Folder{Path: line})
 		}
 	}
 
@@ -71,8 +72,8 @@ func (serv *Service) ChangeDirectory(newPath string) error {
 	return nil
 }
 
-func (Service) ConvertToIFileOperations(content []string) []interfaces.IFileOperations {
-	res := make([]interfaces.IFileOperations, len(content), len(content))
+func (Service) ConvertToIFileOperations(content []string) []domain.IFileOperations {
+	res := make([]domain.IFileOperations, len(content), len(content))
 
 	for ix, line := range content {
 		_, fileName := path.Split(line)
@@ -80,7 +81,7 @@ func (Service) ConvertToIFileOperations(content []string) []interfaces.IFileOper
 			packageName := helpers.ParsePackage(fileName)
 			path := helpers.RemovePackageName(line)
 
-			res[ix] = &objects.File{
+			res[ix] = &file.File{
 				Path:    path,
 				Content: packageName,
 			}
@@ -89,7 +90,7 @@ func (Service) ConvertToIFileOperations(content []string) []interfaces.IFileOper
 		}
 		_, folderName := path.Split(line)
 		if helpers.TypeofFile(folderName) == "folder" {
-			res[ix] = &objects.File{
+			res[ix] = &file.File{
 				Path: line,
 			}
 		}

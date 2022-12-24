@@ -4,7 +4,8 @@ import (
 	"log"
 	"testing"
 
-	helpers "github.com/TudorHulban/GoLayouter/app/helpers/utils"
+	"github.com/TudorHulban/GoLayouter/app/helpers"
+	"github.com/TudorHulban/GoLayouter/domain/objects/entry"
 	"github.com/stretchr/testify/require"
 )
 
@@ -23,7 +24,7 @@ func TestParseToItems(t *testing.T) {
 		t.Run(tc.description, func(t *testing.T) {
 			content, errRe := helpers.ReadFile(_TestCases + tc.fileInput)
 			require.NoError(t, errRe)
-			entries := NewEntries(content).Parse()
+			entries := entry.NewEntries(content).Parse()
 
 			for _, item := range entries {
 				log.Print(item.path, " ", item.kind)

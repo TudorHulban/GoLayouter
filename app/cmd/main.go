@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/TudorHulban/GoLayouter/app/helpers/helpers"
+	"github.com/TudorHulban/GoLayouter/app/helpers"
 	"github.com/TudorHulban/GoLayouter/app/service"
-	"github.com/TudorHulban/GoLayouter/domain/objects"
+	"github.com/TudorHulban/GoLayouter/domain/objects/entry"
 )
 
 // TODO: merge branch
@@ -24,7 +24,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	entries := objects.NewEntries(content).Parse()
+	entries := entry.NewEntries(content).Parse()
 	serv, errNewService := service.NewService(entries)
 	if errNewService != nil {
 		fmt.Print(errNewService)

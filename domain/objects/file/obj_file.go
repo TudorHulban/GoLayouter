@@ -3,11 +3,9 @@ package file
 import (
 	"os"
 
-	helpers "github.com/TudorHulban/GoLayouter/app/helpers/utils"
-	"github.com/TudorHulban/GoLayouter/domain/interfaces"
+	"github.com/TudorHulban/GoLayouter/app/helpers"
+	"github.com/TudorHulban/GoLayouter/domain"
 )
-
-var _ interfaces.IFileOperations = File{}
 
 type File struct {
 	Path    string // extracted from initial file the path where the file will be created
@@ -16,7 +14,7 @@ type File struct {
 	// types of kind : main, test, object, none
 }
 
-var _ interfaces.IFileOperations = File{}
+var _ domain.IFileOperations = &File{}
 
 func (f File) CheckIfPathExists() error {
 	return helpers.CheckIfPathExists(f.Path)

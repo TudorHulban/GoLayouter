@@ -3,7 +3,7 @@ package service
 import (
 	"io"
 
-	"github.com/TudorHulban/GoLayouter/app/helpers/templates"
+	"github.com/TudorHulban/GoLayouter/app/templates"
 )
 
 const (
