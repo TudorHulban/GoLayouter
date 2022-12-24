@@ -3,7 +3,7 @@ package objects
 import (
 	"os"
 
-	"github.com/TudorHulban/GoLayouter/app/helpers/helpers"
+	"github.com/TudorHulban/GoLayouter/app/utils/helpers"
 	"github.com/TudorHulban/GoLayouter/domain/interfaces"
 )
 

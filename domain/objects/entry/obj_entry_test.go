@@ -1,12 +1,11 @@
-package objects
+package entry
 
 import (
 	"testing"
 
+	"github.com/TudorHulban/GoLayouter/app/utils/helpers"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-
-	"github.com/TudorHulban/GoLayouter/app/helpers/helpers"
 )
 
 const _TestCases = "../../test_cases/"
