@@ -24,7 +24,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	entries := entry.NewEntries(content).Parse()
+	entries := entry.NewEntries(content).ParseToItems()
 	serv, errNewService := service.NewService(entries)
 	if errNewService != nil {
 		fmt.Print(errNewService)
