@@ -41,14 +41,12 @@ func CreateGolangTestFile(text string) (string, error) {
 	return path + fileName[:pos] + "_test.go", nil
 }
 
-func ConvertToFiles(text, packageName string) []string {
-	files := strings.Split(text, " ")
+func LineToFiles(text, packageName string) []string {
 	var res []string
+	files := strings.Split(text, " ")
 
 	for _, file := range files {
 		fileTrimmed := strings.TrimLeft(file, " ")
-
-		// guardian
 		if len(fileTrimmed) == 0 {
 
 			continue
@@ -70,42 +68,6 @@ func ConvertToFiles(text, packageName string) []string {
 	return res
 }
 
-func ParsePackage(text string) string {
-	var start, stop int
-
-	for ix, character := range text {
-		if character == '(' {
-			start = ix + 1
-
-			continue
-		}
-
-		if character == ')' {
-			stop = ix
-		}
-	}
-
-	return text[start:stop]
-}
-
-func RemovePackageName(text string) string {
-	var stop int
-
-	for ix, character := range text {
-		if character == '(' {
-			stop = ix
-
-			break
-		}
-	}
-
-	if stop == 0 {
-		return text
-	}
-
-	return text[:stop]
-}
-
 func TypeofFile(fileName string) string {
 	if strings.Contains(fileName, "!") {
 		return "path"
@@ -123,12 +85,16 @@ func TypeofFile(fileName string) string {
 }
 
 func KindofFile(fileName string) string {
+	if strings.Contains(fileName, "test") {
+		return "test"
+	}
+
 	if strings.Contains(fileName, "obj") {
 		return "object"
 	}
 
-	if strings.Contains(fileName, "test") {
-		return "test"
+	if strings.Contains(fileName, ".") {
+		return "normalFile"
 	}
 
 	return "folder"
