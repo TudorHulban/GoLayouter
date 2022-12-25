@@ -31,7 +31,7 @@ func (f *Folder) ChangeDirectory(newPath string) error {
 		return errPathExists
 	}
 
-	f.Path = newPath + "/" + f.Path
+	(*f).Path = newPath + "/" + f.Path
 
 	return nil
 }
