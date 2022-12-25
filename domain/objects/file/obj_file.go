@@ -10,8 +10,6 @@ import (
 type File struct {
 	Path    string // extracted from initial file the path where the file will be created
 	Content string
-	Kind    string // TODO
-	// types of kind : main, test, object, none
 }
 
 var _ domain.IFileOperations = &File{}
@@ -21,7 +19,7 @@ func (f File) CheckIfPathExists() error {
 }
 
 func (f File) DeletePath() error {
-	return RemoveFile(f.Path)
+	return os.Remove(f.Path)
 }
 
 func (f File) WriteToDisk() error {
@@ -43,10 +41,6 @@ func (f File) WriteToDisk() error {
 	}
 
 	return nil
-}
-
-func RemoveFile(path string) error {
-	return os.Remove(helpers.RemovePackageName(path))
 }
 
 func (f *File) ChangeDirectory(newPath string) error {
