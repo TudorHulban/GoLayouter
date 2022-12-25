@@ -1,6 +1,7 @@
 package entry
 
 import (
+	"log"
 	"testing"
 
 	"github.com/TudorHulban/GoLayouter/app/helpers"
@@ -8,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-const _TestCases = "../../test_cases/"
+const _TestCases = "../../../test_cases/"
 
 func WriteToFile(entries []string, output string) error {
 	for _, file := range entries {
@@ -39,12 +40,35 @@ func TestWriteObjectsToFile(t *testing.T) {
 		t.Run(tc.description, func(t *testing.T) {
 			content, errRe := helpers.ReadFile(_TestCases + tc.fileInput)
 			require.NoError(t, errRe)
-			entries := NewEntries(content).Parse()
+			entries := NewEntries(content).ParseToStrings()
 
 			output, errRead := helpers.ReadFile(_TestCases + tc.fileOutput)
 			require.NoError(t, errRead)
 
 			assert.Equal(t, output, entries, "should be equal")
+		})
+	}
+}
+
+func TestParseToItems(t *testing.T) {
+	testCases := []struct {
+		description string
+		fileInput   string
+		fileOutput  string
+	}{
+		{"files + paths + packages", "folder_c6", "folder_c6_results"},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.description, func(t *testing.T) {
+			content, errRe := helpers.ReadFile(_TestCases + tc.fileInput)
+			require.NoError(t, errRe)
+			entries := NewEntries(content).ParseToItems()
+
+			for _, item := range entries {
+				log.Print(item.ObjectPath, item.Kind)
+			}
+
 		})
 	}
 }
