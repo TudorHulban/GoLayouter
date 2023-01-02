@@ -1,0 +1,16 @@
+{{define "tableDriven" -}}
+testCases := []struct {
+	description string
+	input       ...   //  complete with your input type
+	output      ...   //  complete with your output type
+}{
+	{"", "", ""}, //  complete here
+	{"", "", ""}, //  complete here
+	{"", "", ""}, //  complete here
+}
+for _, tc := range testCases {
+	t.Run(tc.description, func(t *testing.T) {
+		assert.Equal(t, tc.output /* funcName(tc.input) */)
+	})
+}
+{{end}}

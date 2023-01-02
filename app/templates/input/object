@@ -1,0 +1,12 @@
+{{define "object" -}}
+package {{.ObjectName}}
+
+type {{.ObjectName}} struct {
+}
+
+func New{{.ObjectName}}() (*{{.ObjectName}}, error) {
+}
+
+func (obj {{.ObjectName}}) Xxx() {
+}
+{{end}}
