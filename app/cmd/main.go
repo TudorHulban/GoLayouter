@@ -31,7 +31,7 @@ func main() {
 		os.Exit(2)
 	}
 
-	errWrite := serv.WriteToDisk()
+	errWrite := serv.Render()
 	if errWrite != nil {
 		fmt.Print(errWrite)
 		os.Exit(3)
