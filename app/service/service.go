@@ -24,22 +24,16 @@ func NewService(content []item.Item) (*Service, error) {
 	}, nil
 }
 
-func (serv Service) WriteToDisk() error {
+func (serv Service) Render() error {
 	for _, path := range serv.paths {
-		if err := path.ObjectPath.WriteToDisk(); err != nil {
+		file, err := path.ObjectPath.WriteToDisk()
+		if err != nil {
 			return fmt.Errorf("error : %w", err)
 		}
 
-		// TODO renter by path.Kind
-	}
-
-	return nil
-}
-
-func (serv *Service) ChangeDirectory(newPath string) error {
-	for _, path := range serv.paths {
-		if err := path.ObjectPath.ChangeDirectory(newPath); err != nil {
-			return fmt.Errorf("error : %w", err)
+		if path.Kind != "folder" {
+			//TODO : parse an object
+			serv.renderFuncs[path.Kind](file, nil)
 		}
 	}
 

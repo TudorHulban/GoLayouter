@@ -6,11 +6,13 @@ import (
 	"github.com/TudorHulban/GoLayouter/app/templates"
 )
 
+const _templatesPath = "../templates/input/"
+
 const (
-	_templateMain        = "../templates/templates/main"
-	_templateTest        = "../templates/templates/test"
-	_templateObject      = "../templates/templates/object"
-	_templateTableDriven = "../templates/temlates/tableDriven"
+	_templateMain        = _templatesPath + "main"
+	_templateTest        = _templatesPath + "test"
+	_templateObject      = _templatesPath + "object"
+	_templateTableDriven = _templatesPath + "tableDriven"
 )
 
 var _renderFuncs = map[string]func(io.Writer, any) error{
@@ -20,18 +22,18 @@ var _renderFuncs = map[string]func(io.Writer, any) error{
 	"tableDriven": renderTableDriven,
 }
 
-func renderMain(w io.Writer, _ any) error {
-	return templates.RanderTo(_templateMain, w, nil)
+func renderMain(w io.Writer, object any) error {
+	return templates.RenderTo(w, _templateMain, object)
 }
 
 func renderTest(w io.Writer, object any) error {
-	return templates.RanderTo(_templateTest, w, object)
+	return templates.RenderTo(w, _templateTest, object)
 }
 
 func renderObject(w io.Writer, object any) error {
-	return templates.RanderTo(_templateObject, w, object)
+	return templates.RenderTo(w, _templateObject, object)
 }
 
 func renderTableDriven(w io.Writer, object any) error {
-	return templates.RanderTo(_templateTableDriven, w, object)
+	return templates.RenderTo(w, _templateTableDriven, object)
 }

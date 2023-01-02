@@ -9,15 +9,14 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-const _pathInput = "../../test_cases/folder_c6"
+const _pathInput = "../../test_cases/files/"
 const _temporaryFolder = "../../temporary_files/"
 
 func TestConvertToIFileOperations(t *testing.T) {
-	content, errRead := helpers.ReadFile(_pathInput)
+	content, errRead := helpers.ReadFile(_pathInput + "folder_c6")
 	require.NoError(t, errRead, "error reading")
 
 	entries := entry.NewEntries(content).ParseToItems()
-	//var writter []domain.IFileOperations
 
 	for _, entry := range entries {
 		log.Print(entry.ObjectPath, entry.Kind)
@@ -39,7 +38,7 @@ func TestWrite(t *testing.T) {
 	}
 	for _, tc := range testCases {
 		t.Run(tc.description, func(t *testing.T) {
-			content, errRead := helpers.ReadFile("../../test_cases/" + tc.fileInput)
+			content, errRead := helpers.ReadFile(_pathInput + tc.fileInput)
 			require.NoError(t, errRead)
 
 			entries := entry.NewEntries(content).ParseToItems()
@@ -52,7 +51,7 @@ func TestWrite(t *testing.T) {
 
 			require.NoError(t, serv.ChangeDirectory(_temporaryFolder+tc.fileOutput))
 
-			require.NoError(t, serv.WriteToDisk(), "writing error")
+			require.NoError(t, serv.Render(), "writing error")
 			require.NoError(t, serv.CheckPathsExists(), "checking error")
 		})
 
@@ -66,7 +65,7 @@ func TestWrite(t *testing.T) {
 	}
 	for _, tc := range testCases {
 		t.Run(tc.description, func(t *testing.T) {
-			content, errRead := helpers.ReadFile("../../test_cases/" + tc.fileInput)
+			content, errRead := helpers.ReadFile(_pathInput + tc.fileInput)
 			require.NoError(t, errRead)
 
 			entries := entry.NewEntries(content).ParseToItems()
@@ -79,7 +78,7 @@ func TestWrite(t *testing.T) {
 
 			require.NoError(t, serv.ChangeDirectory(_temporaryFolder+tc.fileOutput))
 
-			require.Error(t, serv.WriteToDisk(), "writing error")
+			require.Error(t, serv.Render(), "writing error")
 			require.Error(t, serv.CheckPathsExists(), "checking error")
 		})
 
