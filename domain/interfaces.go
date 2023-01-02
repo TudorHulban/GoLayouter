@@ -1,8 +1,9 @@
 package domain
 
-// TODO : remove interface/interfaces
+import "os"
+
 type IFileOperations interface {
-	WriteToDisk() error
+	WriteToDisk() (*os.File, error)
 	CheckIfPathExists() error
 	ChangeDirectory(newPath string) error
 	DeletePath() error

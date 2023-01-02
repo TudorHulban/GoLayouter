@@ -1,4 +1,3 @@
-// TODO: rename this file
 package file
 
 import (
@@ -14,12 +13,13 @@ import (
 const _fileName = "file.go"
 
 var f = &File{
-	Path:    _fileName,
-	Content: "content",
+	Path:              _fileName,
+	GolangPackageName: "content",
 }
 
 func TestCheckIfPathExists(t *testing.T) {
-	require.NoError(t, f.WriteToDisk())
+	_, errWrite := f.WriteToDisk()
+	require.NoError(t, errWrite)
 	require.NoError(t, f.CheckIfPathExists(), helpers.CheckIfPathExists(_fileName))
 
 	require.NoError(t, f.DeletePath())
@@ -33,7 +33,8 @@ func TestChangeDirectory(t *testing.T) {
 	require.NoError(t, f.ChangeDirectory("newDir"))
 	assert.Equal(t, f.Path, newDirectory+"/"+_fileName)
 
-	require.NoError(t, f.WriteToDisk())
+	_, errWrite := f.WriteToDisk()
+	require.NoError(t, errWrite)
 	require.NoError(t, f.DeletePath())
 	require.NoError(t, os.Remove(newDirectory))
 
@@ -41,17 +42,23 @@ func TestChangeDirectory(t *testing.T) {
 }
 
 func TestDeletePath(t *testing.T) {
-	require.NoError(t, f.WriteToDisk(), os.Remove(_fileName))
+	_, errWrite := f.WriteToDisk()
+	require.NoError(t, errWrite, os.Remove(_fileName))
 	require.Error(t, f.CheckIfPathExists())
 }
 
 func TestWriteToDisk(t *testing.T) {
-	require.NoError(t, f.WriteToDisk(), f.CheckIfPathExists())
-
-	content, errRead := helpers.ReadFile(_fileName)
-
-	require.NoError(t, errRead)
-	assert.Equal(t, content[0], f.Content)
-
+	_, errWrite := f.WriteToDisk()
+	require.NoError(t, errWrite, f.CheckIfPathExists())
 	require.NoError(t, f.DeletePath())
+}
+
+func TestWrite(t *testing.T) {
+	content := []byte("main template")
+	lenght, errWrite := f.Write(content)
+	require.NoError(t, errWrite)
+	require.NoError(t, f.CheckIfPathExists())
+	require.NoError(t, f.DeletePath())
+
+	assert.Equal(t, lenght, len(content))
 }

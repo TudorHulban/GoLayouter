@@ -21,8 +21,18 @@ func (f Folder) CheckIfPathExists() error {
 	return helpers.CheckIfPathExists(f.Path)
 }
 
-func (f Folder) WriteToDisk() error {
-	return helpers.CreateFolder(f.Path)
+func (f Folder) WriteToDisk() (*os.File, error) {
+	errCreate := helpers.CreateFolder(f.Path)
+	if errCreate != nil {
+		return nil, errCreate
+	}
+
+	file, errOpenFile := os.Open(f.Path)
+	if errOpenFile != nil {
+		return nil, errOpenFile
+	}
+
+	return file, nil
 }
 
 func (f *Folder) ChangeDirectory(newPath string) error {

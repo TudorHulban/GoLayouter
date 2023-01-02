@@ -9,5 +9,3 @@ type Item struct {
 
 	Kind string
 }
-
-type Items []*Item

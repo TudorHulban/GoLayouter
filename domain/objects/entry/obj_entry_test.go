@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-const _TestCases = "../../../test_cases/"
+const _TestCases = "../../../test_cases/files/"
 
 func WriteToFile(entries []string, output string) error {
 	for _, file := range entries {

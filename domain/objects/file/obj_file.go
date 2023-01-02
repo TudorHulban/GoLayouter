@@ -1,6 +1,7 @@
 package file
 
 import (
+	"io"
 	"os"
 
 	"github.com/TudorHulban/GoLayouter/app/helpers"
@@ -8,11 +9,34 @@ import (
 )
 
 type File struct {
-	Path    string // extracted from initial file the path where the file will be created
-	Content string
+	// extracted from initial file the path where the file will be created
+	Path              string
+	GolangPackageName string
 }
 
 var _ domain.IFileOperations = &File{}
+var _ io.Writer = File{}
+
+// Write opens the file path and write the content parsed with "Write"
+// method from io package. If file does not exists
+// it will be created with "Create" method from os package.
+func (f File) Write(content []byte) (int, error) {
+	if helpers.CheckIfPathExists(f.Path) != nil {
+		path, errCreate := os.Create(f.Path)
+		if errCreate != nil {
+			return 0, errCreate
+		}
+
+		return path.Write(content)
+	}
+
+	path, errOpen := os.Open(f.Path)
+	if errOpen != nil {
+		return 0, errOpen
+	}
+
+	return path.Write(content)
+}
 
 func (f File) CheckIfPathExists() error {
 	return helpers.CheckIfPathExists(f.Path)
@@ -22,25 +46,8 @@ func (f File) DeletePath() error {
 	return os.Remove(f.Path)
 }
 
-func (f File) WriteToDisk() error {
-	var emptyFile *os.File
-	if helpers.CheckIfPathExists(f.Path) != nil {
-		var errCreate error
-
-		emptyFile, errCreate = os.Create(f.Path)
-		if errCreate != nil {
-			return errCreate
-		}
-
-		errWrite := helpers.WriteTextInFile(f.Content, f.Path)
-		if errWrite != nil {
-			return errWrite
-		}
-
-		return emptyFile.Close()
-	}
-
-	return nil
+func (f File) WriteToDisk() (*os.File, error) {
+	return os.Create(f.Path)
 }
 
 func (f *File) ChangeDirectory(newPath string) error {

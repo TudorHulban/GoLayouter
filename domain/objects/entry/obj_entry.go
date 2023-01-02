@@ -168,12 +168,11 @@ func (e *Entries) ParseToItems() []item.Item {
 			if helpers.GetCommand(entry.folderInfo) != "." {
 				stackFolders.Push(helpers.GetCommand(entry.folderInfo))
 
-				folder := &folder.Folder{
-					Path: stackFolders.String(),
-				}
 				res = append(res, item.Item{
-					ObjectPath: folder,
-					Kind:       helpers.KindofFile(folder.Path),
+					ObjectPath: &folder.Folder{
+						Path: stackFolders.String(),
+					},
+					Kind: helpers.KindofFile(entry.folderInfo),
 				})
 
 				stackIndents.Push(-1)
@@ -193,32 +192,30 @@ func (e *Entries) ParseToItems() []item.Item {
 		}
 
 		if helpers.TypeofFile(entry.folderInfo) == "file" {
-			pack := stackPackages.Peek()
+			oldPackage := stackPackages.Peek()
 
 			if stackPackages.IsEmpty() {
 				stackPackages.Push(_defaultPackage)
 
-				pack = _defaultPackage
+				oldPackage = _defaultPackage
 			}
 
 			if stackPackages.Peek() == "t" || stackPackages.Peek() == "tt" {
+				newPackage := stackFolders.Peek()
 				stackPackages.Pop()
 
-				pack = stackPackages.Peek().(string)
-
-				stackPackages.Push("t")
+				oldPackage = stackPackages.Peek().(string)
+				stackPackages.Push(newPackage)
 			}
 
 			files := helpers.LineToFiles(entry.folderInfo, stackPackages.Peek().(string))
 			for _, fileName := range files {
-				file := &file.File{
-					Path:    stackFolders.String() + "/" + fileName,
-					Content: pack.(string),
-				}
-
 				res = append(res, item.Item{
-					ObjectPath: file,
-					Kind:       helpers.KindofFile(fileName),
+					ObjectPath: &file.File{
+						Path:              stackFolders.String() + "/" + fileName,
+						GolangPackageName: oldPackage.(string),
+					},
+					Kind: helpers.KindofFile(fileName),
 				})
 			}
 
@@ -248,14 +245,12 @@ func (e *Entries) ParseToItems() []item.Item {
 			stackFolders.Push(entry.folderInfo)
 			stackIndents.Push(entry.indent)
 
-			folder := &folder.Folder{
-				Path: stackFolders.String(),
-			}
 			res = append(res, item.Item{
-				ObjectPath: folder,
-				Kind:       helpers.KindofFile(folder.Path),
+				ObjectPath: &folder.Folder{
+					Path: stackFolders.String(),
+				},
+				Kind: helpers.KindofFile(entry.folderInfo),
 			})
-
 			continue
 		}
 
@@ -264,12 +259,11 @@ func (e *Entries) ParseToItems() []item.Item {
 			stackFolders.Push(entry.folderInfo)
 			stackIndents.Push(entry.indent)
 
-			folder := &folder.Folder{
-				Path: stackFolders.String(),
-			}
 			res = append(res, item.Item{
-				ObjectPath: folder,
-				Kind:       helpers.KindofFile(folder.Path),
+				ObjectPath: &folder.Folder{
+					Path: stackFolders.String(),
+				},
+				Kind: helpers.KindofFile(entry.folderInfo),
 			})
 
 			continue
@@ -290,12 +284,11 @@ func (e *Entries) ParseToItems() []item.Item {
 		stackFolders.Push(entry.folderInfo)
 		stackIndents.Push(entry.indent)
 
-		folder := &folder.Folder{
-			Path: stackFolders.String(),
-		}
 		res = append(res, item.Item{
-			ObjectPath: folder,
-			Kind:       helpers.KindofFile(folder.Path),
+			ObjectPath: &folder.Folder{
+				Path: stackFolders.String(),
+			},
+			Kind: helpers.KindofFile(entry.folderInfo),
 		})
 
 	}
