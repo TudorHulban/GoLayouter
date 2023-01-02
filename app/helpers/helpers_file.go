@@ -85,6 +85,10 @@ func TypeofFile(fileName string) string {
 }
 
 func KindofFile(fileName string) string {
+	if strings.Contains(fileName, "main") {
+		return "main"
+	}
+
 	if strings.Contains(fileName, "test") {
 		return "test"
 	}
