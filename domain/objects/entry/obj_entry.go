@@ -192,28 +192,28 @@ func (e *Entries) ParseToItems() []item.Item {
 		}
 
 		if helpers.TypeofFile(entry.folderInfo) == "file" {
-			oldPackage := stackPackages.Peek()
+			packageName := stackPackages.Peek()
 
 			if stackPackages.IsEmpty() {
 				stackPackages.Push(_defaultPackage)
 
-				oldPackage = _defaultPackage
+				packageName = _defaultPackage
 			}
 
 			if stackPackages.Peek() == "t" || stackPackages.Peek() == "tt" {
-				newPackage := stackFolders.Peek()
-				stackPackages.Pop()
+				//log.Print(stackPackages.String())
+				testPackage := stackFolders.Pop()
+				packageName = stackPackages.Peek().(string)
 
-				oldPackage = stackPackages.Peek().(string)
-				stackPackages.Push(newPackage)
+				stackPackages.Push(testPackage)
 			}
 
-			files := helpers.LineToFiles(entry.folderInfo, stackPackages.Peek().(string))
+			files := helpers.LineToFiles(entry.folderInfo, packageName.(string))
 			for _, fileName := range files {
 				res = append(res, item.Item{
 					ObjectPath: &file.File{
 						Path:              stackFolders.String() + "/" + fileName,
-						GolangPackageName: oldPackage.(string),
+						GolangPackageName: stackPackages.Peek().(string),
 					},
 					Kind: helpers.KindofFile(fileName),
 				})

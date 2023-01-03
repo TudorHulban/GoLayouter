@@ -1,10 +1,9 @@
 package domain
 
-import "os"
-
 type IFileOperations interface {
-	WriteToDisk() (*os.File, error)
+	WriteToDisk() error
 	CheckIfPathExists() error
 	ChangeDirectory(newPath string) error
 	DeletePath() error
+	GetPath() string
 }

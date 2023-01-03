@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"os"
 
 	"github.com/TudorHulban/GoLayouter/domain/objects/item"
 )
@@ -26,14 +27,18 @@ func NewService(content []item.Item) (*Service, error) {
 
 func (serv Service) Render() error {
 	for _, path := range serv.paths {
-		file, err := path.ObjectPath.WriteToDisk()
-		if err != nil {
-			return fmt.Errorf("error : %w", err)
+		errWrite := path.ObjectPath.WriteToDisk()
+		if errWrite != nil {
+			return fmt.Errorf("error : %w", errWrite)
 		}
 
 		if path.Kind != "folder" {
-			//TODO : parse an object
-			serv.renderFuncs[path.Kind](file, nil)
+			_, errOpen := os.Open(path.ObjectPath.GetPath())
+			if errOpen != nil {
+				return errOpen
+			}
+
+			//serv.renderFuncs[path.Kind](f, nil)
 		}
 	}
 

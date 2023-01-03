@@ -1,12 +1,12 @@
 ! ../../temporary_files
  program
   helpers1
-  # package helpers
+  # helpers
    helpers.go
   # t
    helpers_file.go
  objects1
-  # package objects
+  # objects
   obj_folder.go
   # t
   obj_entry.go

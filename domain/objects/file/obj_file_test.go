@@ -18,8 +18,7 @@ var f = &File{
 }
 
 func TestCheckIfPathExists(t *testing.T) {
-	_, errWrite := f.WriteToDisk()
-	require.NoError(t, errWrite)
+	require.NoError(t, f.WriteToDisk())
 	require.NoError(t, f.CheckIfPathExists(), helpers.CheckIfPathExists(_fileName))
 
 	require.NoError(t, f.DeletePath())
@@ -33,8 +32,7 @@ func TestChangeDirectory(t *testing.T) {
 	require.NoError(t, f.ChangeDirectory("newDir"))
 	assert.Equal(t, f.Path, newDirectory+"/"+_fileName)
 
-	_, errWrite := f.WriteToDisk()
-	require.NoError(t, errWrite)
+	require.NoError(t, f.WriteToDisk())
 	require.NoError(t, f.DeletePath())
 	require.NoError(t, os.Remove(newDirectory))
 
@@ -42,14 +40,13 @@ func TestChangeDirectory(t *testing.T) {
 }
 
 func TestDeletePath(t *testing.T) {
-	_, errWrite := f.WriteToDisk()
-	require.NoError(t, errWrite, os.Remove(_fileName))
+	require.NoError(t, f.WriteToDisk())
+	require.NoError(t, os.Remove(_fileName))
 	require.Error(t, f.CheckIfPathExists())
 }
 
 func TestWriteToDisk(t *testing.T) {
-	_, errWrite := f.WriteToDisk()
-	require.NoError(t, errWrite, f.CheckIfPathExists())
+	require.NoError(t, f.WriteToDisk(), f.CheckIfPathExists())
 	require.NoError(t, f.DeletePath())
 }
 

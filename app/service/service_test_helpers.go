@@ -2,7 +2,7 @@ package service
 
 import "fmt"
 
-func (serv *Service) CheckPathsExists() error {
+func (serv *Service) CheckIfPathsExists() error {
 	for _, path := range serv.paths {
 		errCheck := path.ObjectPath.CheckIfPathExists()
 		if errCheck != nil {
@@ -32,4 +32,14 @@ func (serv *Service) ChangeDirectory(newPath string) error {
 	}
 
 	return nil
+}
+
+func (serv *Service) GetPaths() []string {
+	var res []string
+
+	for _, path := range serv.paths {
+		res = append(res, path.ObjectPath.GetPath())
+	}
+
+	return res
 }

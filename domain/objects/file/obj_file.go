@@ -17,6 +17,10 @@ type File struct {
 var _ domain.IFileOperations = &File{}
 var _ io.Writer = File{}
 
+func (f File) GetPath() string {
+	return f.Path
+}
+
 // Write opens the file path and write the content parsed with "Write"
 // method from io package. If file does not exists
 // it will be created with "Create" method from os package.
@@ -46,8 +50,9 @@ func (f File) DeletePath() error {
 	return os.Remove(f.Path)
 }
 
-func (f File) WriteToDisk() (*os.File, error) {
-	return os.Create(f.Path)
+func (f File) WriteToDisk() error {
+	_, errCreate := os.Create(f.Path)
+	return errCreate
 }
 
 func (f *File) ChangeDirectory(newPath string) error {

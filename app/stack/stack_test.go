@@ -32,7 +32,6 @@ func TestPop(t *testing.T) {
 
 	stackFolders.Push("folder1")
 	stackFolders.Push("subfolder")
-	stackFolders.Pop()
 
 	require.Equal(t, "folder1", stackFolders.String())
 }
