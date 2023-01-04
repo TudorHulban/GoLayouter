@@ -38,128 +38,16 @@ func NewEntries(content []string) *Entries {
 	return &res
 }
 
-func (e *Entries) ParseToStrings() []string {
-	var res []string
-
-	var stackFolders stack.Stack
-	var stackIndents stack.Stack
-	var stackPackages stack.Stack
-
-	for ix, entry := range *e {
-		if helpers.TypeofFile(entry.folderInfo) == "path" {
-			stackFolders = nil
-			stackIndents = nil
-			stackPackages = nil
-
-			if helpers.GetCommand(entry.folderInfo) != "." {
-				stackFolders.Push(helpers.GetCommand(entry.folderInfo))
-				res = append(res, stackFolders.String())
-				stackIndents.Push(-1)
-
-				continue
-			}
-
-			stackIndents.Push(entry.indent)
-
-			continue
-		}
-
-		if helpers.TypeofFile(entry.folderInfo) == "pack" {
-			stackPackages.Push(helpers.GetCommand(entry.folderInfo))
-
-			continue
-		}
-
-		if helpers.TypeofFile(entry.folderInfo) == "file" {
-			pack := stackPackages.Peek()
-
-			if stackPackages.IsEmpty() {
-				stackPackages.Push(_defaultPackage)
-
-				pack = _defaultPackage
-			}
-
-			if stackPackages.Peek() == "t" {
-				stackPackages.Pop()
-
-				pack = stackPackages.Peek().(string)
-
-				stackPackages.Push("t")
-			}
-
-			files := helpers.LineToFiles(entry.folderInfo, stackPackages.Peek().(string))
-
-			for _, file := range files {
-				file = file + "(" + pack.(string) + ")"
-				line := stackFolders.String() + "/" + file
-
-				res = append(res, line)
-			}
-
-			continue
-		}
-
-		if ix == 0 {
-			stackFolders.Push(entry.folderInfo)
-			stackIndents.Push(0)
-
-			res = append(res, stackFolders.String())
-
-			continue
-		}
-
-		if stackIndents.Peek().(int) < 0 {
-			res = res[:len(res)-1]
-		}
-
-		if entry.indent > stackIndents.Peek().(int) {
-			stackFolders.Push(entry.folderInfo)
-			stackIndents.Push(entry.indent)
-
-			res = append(res, stackFolders.String())
-
-			continue
-		}
-
-		if entry.indent == stackIndents.Peek().(int) {
-			stackFolders.Pop()
-			stackFolders.Push(entry.folderInfo)
-			stackIndents.Push(entry.indent)
-
-			res = append(res, stackFolders.String())
-
-			continue
-		}
-
-		for entry.indent < stackIndents.Peek().(int) && len(stackIndents) > 1 {
-			stackFolders.Pop()
-			stackIndents.Pop()
-
-			if entry.indent == stackIndents.Peek().(int) {
-				stackFolders.Pop()
-				stackPackages.Pop()
-
-				break
-			}
-		}
-
-		stackFolders.Push(entry.folderInfo)
-		stackIndents.Push(entry.indent)
-
-		res = append(res, stackFolders.String())
-	}
-
-	return res
-}
-
 func (e *Entries) ParseToItems() []item.Item {
 	var res []item.Item
 
+	var first bool
+
 	var stackFolders stack.Stack
 	var stackIndents stack.Stack
 	var stackPackages stack.Stack
 
-	for ix, entry := range *e {
+	for _, entry := range *e {
 		if helpers.TypeofFile(entry.folderInfo) == "path" {
 			stackFolders = nil
 			stackIndents = nil
@@ -167,6 +55,7 @@ func (e *Entries) ParseToItems() []item.Item {
 
 			if helpers.GetCommand(entry.folderInfo) != "." {
 				stackFolders.Push(helpers.GetCommand(entry.folderInfo))
+				stackIndents.Push(-1)
 
 				res = append(res, item.Item{
 					ObjectPath: &folder.Folder{
@@ -174,8 +63,6 @@ func (e *Entries) ParseToItems() []item.Item {
 					},
 					Kind: helpers.KindofFile(entry.folderInfo),
 				})
-
-				stackIndents.Push(-1)
 
 				continue
 			}
@@ -201,19 +88,18 @@ func (e *Entries) ParseToItems() []item.Item {
 			}
 
 			if stackPackages.Peek() == "t" || stackPackages.Peek() == "tt" {
-				//log.Print(stackPackages.String())
-				testPackage := stackFolders.Pop()
+				testPackage := stackPackages.Pop()
 				packageName = stackPackages.Peek().(string)
 
 				stackPackages.Push(testPackage)
 			}
 
-			files := helpers.LineToFiles(entry.folderInfo, packageName.(string))
+			files := helpers.LineToFiles(entry.folderInfo, stackPackages.Peek().(string))
 			for _, fileName := range files {
 				res = append(res, item.Item{
 					ObjectPath: &file.File{
 						Path:              stackFolders.String() + "/" + fileName,
-						GolangPackageName: stackPackages.Peek().(string),
+						GolangPackageName: packageName.(string),
 					},
 					Kind: helpers.KindofFile(fileName),
 				})
@@ -222,9 +108,15 @@ func (e *Entries) ParseToItems() []item.Item {
 			continue
 		}
 
-		if ix == 0 {
+		if (stackIndents != nil) && (stackIndents.Peek().(int) < 0) {
+			res = res[:len(res)-1]
+		}
+
+		if !first {
+			first = true
+
 			stackFolders.Push(entry.folderInfo)
-			stackIndents.Push(0)
+			stackIndents.Push(entry.indent)
 
 			folder := &folder.Folder{
 				Path: stackFolders.String(),
@@ -237,10 +129,6 @@ func (e *Entries) ParseToItems() []item.Item {
 			continue
 		}
 
-		if stackIndents.Peek().(int) < 0 {
-			res = res[:len(res)-1]
-		}
-
 		if entry.indent > stackIndents.Peek().(int) {
 			stackFolders.Push(entry.folderInfo)
 			stackIndents.Push(entry.indent)
@@ -251,6 +139,7 @@ func (e *Entries) ParseToItems() []item.Item {
 				},
 				Kind: helpers.KindofFile(entry.folderInfo),
 			})
+
 			continue
 		}
 

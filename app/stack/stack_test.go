@@ -32,8 +32,11 @@ func TestPop(t *testing.T) {
 
 	stackFolders.Push("folder1")
 	stackFolders.Push("subfolder")
+	stackFolders.Push("subsubsub")
 
-	require.Equal(t, "folder1", stackFolders.String())
+	stackFolders.Pop()
+
+	require.Equal(t, "folder1/subfolder", stackFolders.String())
 }
 
 func TestPeek(t *testing.T) {
@@ -41,10 +44,12 @@ func TestPeek(t *testing.T) {
 
 	stackFolders.Push("folder1")
 	stackFolders.Push("subfolder")
+	stackFolders.Push("subsubsub")
 
 	result := stackFolders.Peek()
 
-	require.Equal(t, "subfolder", result)
+	require.Equal(t, "subsubsub", result)
+	require.Equal(t, stackFolders.String(), "folder1/subfolder/subsubsub")
 }
 
 func TestStringStack(t *testing.T) {

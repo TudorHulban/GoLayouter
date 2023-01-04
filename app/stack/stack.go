@@ -8,11 +8,7 @@ import (
 type Stack []any
 
 func (s *Stack) IsEmpty() bool {
-	if len(*s) == 0 {
-		return true
-	}
-
-	return false
+	return len(*s) == 0
 }
 
 func (s *Stack) Push(item any) {
