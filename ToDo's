@@ -1,0 +1,10 @@
+//TODO:
+1. temporary files all test cases
+2. when no argument, create default 0 file set
+3. define file set to be imported
+4. add make file : go mod , go sum , golangci-li  , yaml
+5. documentation
+6. "dev.to"
+7. template renderer approach
+8. t - simple test
+   tt - table driven

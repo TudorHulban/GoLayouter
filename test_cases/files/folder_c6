@@ -1,0 +1,13 @@
+! ../../temporary_files
+ program
+  helpers1
+  # helpers
+   helpers.go
+  # t
+   helpers_file.go
+ objects1
+  # objects
+  obj_folder.go
+  # t
+  obj_entry.go
+  obj_file.go

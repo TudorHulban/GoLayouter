@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/TudorHulban/GoLayouter/app/helpers/helpers"
+	"github.com/TudorHulban/GoLayouter/app/helpers"
 	"github.com/TudorHulban/GoLayouter/app/service"
-	"github.com/TudorHulban/GoLayouter/domain/objects"
+	"github.com/TudorHulban/GoLayouter/domain/objects/entry"
 )
 
-// TODO merge branch
+// TODO: merge branch
 // golang cli
 // yaml config
 // github actions
@@ -24,14 +24,14 @@ func main() {
 		os.Exit(1)
 	}
 
-	entries := objects.NewEntries(content).Parse()
+	entries := entry.NewEntries(content).ParseToItems()
 	serv, errNewService := service.NewService(entries)
 	if errNewService != nil {
 		fmt.Print(errNewService)
 		os.Exit(2)
 	}
 
-	errWrite := serv.WriteToDisk()
+	errWrite := serv.Render()
 	if errWrite != nil {
 		fmt.Print(errWrite)
 		os.Exit(3)

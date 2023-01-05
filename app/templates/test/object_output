@@ -1,0 +1,10 @@
+package Main
+
+type Main struct {
+}
+
+func NewMain() (*Main, error) {
+}
+
+func (obj Main) Xxx() {
+}
